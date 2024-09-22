@@ -1,8 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { registerRootComponent } from 'expo';
-
-const App = () => {
+export default function App () {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Ofertas Mercado Libre</Text>
@@ -57,5 +55,3 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 });
-
-registerRootComponent(App);
