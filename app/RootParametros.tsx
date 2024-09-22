@@ -2,5 +2,5 @@
 export type RootStackParamList = {
   Explore: undefined;
   Home: undefined;
-  DetailsProduct:{ id: string }; // Details Screen espera un parámetro
+  DetailsProduct:{ idProduct: string }; // Details Screen espera un parámetro
 };

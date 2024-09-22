@@ -16,7 +16,7 @@ const CardProduct: React.FC<CardProductProps> = ({id, image, title, origin}) =>{
     const navigation = useNavigation<NavigationProp<RootStackParamList>>();
     
     const handleCardProductClick = ()=>{
-        navigation.navigate('Home');
+        navigation.navigate('DetailsProduct', {idProduct: id });
     }    
     return (
         <TouchableOpacity style={styles.cardContainer} onPress={handleCardProductClick}>
@@ -72,3 +72,4 @@ const styles = StyleSheet.create({
     color: '#777',
     },
 });
+
