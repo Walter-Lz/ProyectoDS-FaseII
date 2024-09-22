@@ -1,37 +1,51 @@
-import { Tabs } from 'expo-router';
 import React from 'react';
-
+import { NavigationContainer } from '@react-navigation/native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { TabBarIcon } from '@/components/navigation/TabBarIcon';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
+import HomeScreen from './index'; // Asegúrate de tener esta pantalla
+import ExploreScreen from './explore'; // Asegúrate de tener esta pantalla
 
-export default function TabLayout() {
+const Tab = createBottomTabNavigator();
+const Stack = createNativeStackNavigator();
+
+function TabLayout() {
   const colorScheme = useColorScheme();
 
   return (
-    <Tabs
+    <Tab.Navigator
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
         headerShown: false,
       }}>
-      <Tabs.Screen
-        name="index"
+      <Tab.Screen
+        name="Home"
+        component={HomeScreen}
         options={{
-          title: 'Home',
           tabBarIcon: ({ color, focused }) => (
             <TabBarIcon name={focused ? 'home' : 'home-outline'} color={color} />
           ),
         }}
       />
-      <Tabs.Screen
-        name="explore"
+      <Tab.Screen
+        name="Explore"
+        component={ExploreScreen}
         options={{
-          title: 'Explore',
           tabBarIcon: ({ color, focused }) => (
             <TabBarIcon name={focused ? 'code-slash' : 'code-slash-outline'} color={color} />
           ),
         }}
       />
-    </Tabs>
+    </Tab.Navigator>
+  );
+}
+
+export default function App() {
+  return (
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="Main" component={TabLayout} />
+      </Stack.Navigator>
   );
 }
