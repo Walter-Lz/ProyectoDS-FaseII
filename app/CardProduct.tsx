@@ -8,10 +8,13 @@ interface CardProductProps {
   id: string;
   image: string;
   title: string;
-  origin: string;
+  price: number;
+  condition: string;
+  availableQuantity: number;
+  seller: string;
 }
 
-const CardProduct: React.FC<CardProductProps> = ({ id, image, title, origin }) => {
+const CardProduct: React.FC<CardProductProps> = ({ id, image, title, price, condition, availableQuantity, seller }) => {
   const [isFavorite, setIsFavorite] = useState(false);
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
@@ -26,7 +29,10 @@ const CardProduct: React.FC<CardProductProps> = ({ id, image, title, origin }) =
       </View>
       <View style={styles.content}>
         <Text style={styles.title}>{title}</Text>
-        <Text style={styles.origin}>{origin}</Text>
+        <Text style={styles.price}>Precio: ${price}</Text>
+        <Text style={styles.condition}>Condición: {condition}</Text>
+        <Text style={styles.availableQuantity}>Cantidad disponible: {availableQuantity}</Text>
+        <Text style={styles.seller}>Vendedor: {seller}</Text>
       </View>
     </TouchableOpacity>
   );
@@ -73,5 +79,22 @@ const styles = StyleSheet.create({
   origin: {
     fontSize: 14,
     color: '#777',
+  },
+  price: {
+    fontSize: 16,
+    color: '#000',
+    marginVertical: 5,
+  },
+  condition: {
+    fontSize: 14,
+    color: '#555',
+  },
+  availableQuantity: {
+    fontSize: 14,
+    color: '#555',
+  },
+  seller: {
+    fontSize: 14,
+    color: '#555',
   },
 });

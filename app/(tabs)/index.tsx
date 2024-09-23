@@ -30,7 +30,6 @@ export default function HomePage() {
             id={item.id}
             image={item.thumbnail}
             title={item.title}
-            origin={item.address?.state_name || 'Desconocido'}
             price={item.price}
             condition={item.condition}
             availableQuantity={item.available_quantity}
