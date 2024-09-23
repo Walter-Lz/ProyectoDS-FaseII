@@ -1,13 +1,21 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { useNavigation, NavigationProp } from '@react-navigation/native';
+import { RootStackParamList } from '../RootParametros'; // Ajusta la ruta
+
+
 export default function App () {
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+  const handleCardProductClick = ()=>{
+    navigation.navigate('DetailsProduct', {idProduct: "id" });
+} 
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Ofertas Mercado Libre</Text>
       <Text style={styles.subtitle}>¡Descubre las mejores ofertas del día!</Text>
-
       {/* Sección de botones como enlaces a posibles ofertas */}
-      <TouchableOpacity style={styles.offerButton}>
+      <TouchableOpacity style={styles.offerButton} onPress={handleCardProductClick}>
         <Text style={styles.buttonText}>Ver Smartphones</Text>
       </TouchableOpacity>
 

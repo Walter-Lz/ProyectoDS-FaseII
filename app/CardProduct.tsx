@@ -1,6 +1,6 @@
 
 import { useNavigation, NavigationProp } from '@react-navigation/native';
-import { RootStackParamList } from './RootParametros'; // Ajusta la ruta
+import { RootStackParamList } from './RootParametros';
 import { useState } from "react"
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 
@@ -21,7 +21,8 @@ const CardProduct: React.FC<CardProductProps> = ({id, image, title, origin}) =>{
     return (
         <TouchableOpacity style={styles.cardContainer} onPress={handleCardProductClick}>
           <View style={styles.imageContainer}>
-             <Image source={{ uri: image }} style={styles.image} />
+             <Image source={{ uri: image.replace('http://', 'https://') }} style={styles.image} 
+             resizeMode='contain'/>
           </View>
           <View style={styles.content}>
             <Text style={styles.title}>{title}</Text>
