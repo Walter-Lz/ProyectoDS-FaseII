@@ -3,7 +3,7 @@ import { getAuth, GoogleAuthProvider, signInWithPopup, signOut } from "firebase/
 import { getFirestore } from 'firebase/firestore';
 
 const firebaseConfig = {
-    apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
+    apiKey: "AIzaSyBvZbgBeO7qoGH9mS8yVI5FCsqkfWOXY54",
     authDomain: "promocionestec-a3718.firebaseapp.com",
     projectId: "promocionestec-a3718",
     storageBucket: "promocionestec-a3718.appspot.com",

@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Modal, Image } from 'react-native';
-import { signInWithGoogle, logOut, auth } from '../config/firebaseConfig';
+import { useRouter } from 'expo-router';
+
 const Navbar = () => {
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const router = useRouter();
 
   const handleMouseEnter = (item: string) => {
     setHoveredItem(item);
@@ -17,29 +19,38 @@ const Navbar = () => {
     setModalVisible(!modalVisible);
   };
 
+  const navigateTo = (route: string) => {
+    router.push(route);
+  };
+
   return (
     <View style={styles.navbar}>
       <Text style={styles.logo}>Mercado TEC</Text>
       <View style={styles.navItems}>
-        {['Buscar articulo', 'Ofertas relampago'].map((item, index) => (
+        {[
+          { label: 'Inicio', route: '/' },
+          { label: 'Calendario', route: '/calendar' },
+          { label: 'Sobre Nosotros', route: '/about' }
+        ].map((item, index) => (
           <TouchableOpacity
             key={index}
-            onPressIn={() => handleMouseEnter(item)}
+            onPressIn={() => handleMouseEnter(item.label)}
             onPressOut={handleMouseLeave}
+            onPress={() => navigateTo(item.route)}
           >
             <Text
               style={[
                 styles.navItem,
-                hoveredItem === item && styles.navItemHovered,
+                hoveredItem === item.label && styles.navItemHovered,
               ]}
             >
-              {item}
+              {item.label}
             </Text>
           </TouchableOpacity>
         ))}
         <TouchableOpacity style={styles.profileButton} onPress={toggleModal}>
           <Image
-            source={{ uri: 'https://via.placeholder.com/150' }} // Reemplaza con la URL de la imagen del usuario
+            source={{ uri: 'https://via.placeholder.com/150' }}
             style={styles.profileImage}
           />
         </TouchableOpacity>
@@ -56,7 +67,7 @@ const Navbar = () => {
               <Text style={styles.closeButtonText}>X</Text>
             </TouchableOpacity>
             <Text style={styles.modalText}>Perfil del Usuario</Text>
-            <TouchableOpacity style={styles.googleButton} onPress={signInWithGoogle}>
+            <TouchableOpacity style={styles.googleButton}>
               <Text style={styles.googleButtonText}>Iniciar con Google</Text>
             </TouchableOpacity>
           </View>
