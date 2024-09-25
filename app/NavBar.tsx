@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image, Dimensions } from 'react-native';
 import { useRouter } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons'; // Para el ícono de menú hamburguesa
+import { Ionicons } from '@expo/vector-icons'; 
 import LoginModal from './LoginModal';
 
 const Navbar = () => {
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
-  const [menuVisible, setMenuVisible] = useState(false); // Controla el menú desplegable
+  const [menuVisible, setMenuVisible] = useState(false); 
   const router = useRouter();
   const screenWidth = Dimensions.get('window').width;
 
@@ -25,11 +25,11 @@ const Navbar = () => {
 
   const navigateTo = (route: string) => {
     router.push(route as any);
-    setMenuVisible(false); // Oculta el menú al hacer clic en una opción
+    setMenuVisible(false); 
   };
 
   const toggleMenu = () => {
-    setMenuVisible(!menuVisible); // Alterna el estado del menú desplegable
+    setMenuVisible(!menuVisible); 
   };
 
   return (
@@ -122,7 +122,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#333',
     padding: 15,
-    zIndex: 100, // Asegura que el navbar tenga prioridad sobre otros elementos
+    zIndex: 100, 
   },
   logo: {
     color: '#fff',
@@ -139,14 +139,14 @@ const styles = StyleSheet.create({
   },
   navItem: {
     color: '#fff',
-    marginHorizontal: 8, // Reduce el espacio entre los items
+    marginHorizontal: 8, 
     fontSize: 16,
   },
   navItemHovered: {
     color: '#1DB954',
   },
   profileButton: {
-    marginLeft: 10, // Espacio ajustado entre el login y los items
+    marginLeft: 10,
   },
   profileButtonSmallScreen: {
     marginLeft: 15,
@@ -163,12 +163,12 @@ const styles = StyleSheet.create({
   },
   menu: {
     position: 'absolute',
-    top: 60, // Justo debajo de la barra de navegación
+    top: 60, 
     left: 0,
     right: 0,
     backgroundColor: '#333',
     paddingVertical: 20,
-    zIndex: 9999, // Asegura que el menú esté encima de otros elementos
+    zIndex: 9999, 
     alignItems: 'center',
   },
 });
