@@ -1,78 +1,88 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Modal, Image } from 'react-native';
-import { signInWithGoogle,logOut } from '../config/firebaseConfig';
+import { signInWithGoogle, getCurrentUser, logOut } from '../config/firebaseConfig';
 
-const LoginModal = () => {
-  const [modalVisible, setModalVisible] = useState(false);
+interface LoginModalProps {
+  visible: boolean;
+  onClose: () => void;
+}
+
+const LoginModal: React.FC<LoginModalProps> = ({ visible, onClose }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false); 
+  const [userProfilePicture, setUserProfilePicture] = useState<string | null>(null);
   const DEFAULT_PROFILE_PICTURE_URL = "https://uxwing.com/wp-content/themes/uxwing/download/peoples-avatars/default-profile-picture-male-icon.png";
 
-  const toggleModal = () => {
-    setModalVisible(!modalVisible);
-  };
+  useEffect(() => {
+    const currentUser = getCurrentUser();
+    if (currentUser) {
+      setIsLoggedIn(true);
+      setUserProfilePicture(currentUser.photoURL);
+    }
+  }, []);
 
   const handleSignInWithGoogle = async () => {
     try {
-      signInWithGoogle();
-      setIsLoggedIn(true); 
-      toggleModal();
+      await signInWithGoogle();
+      const currentUser = getCurrentUser();
+      if (currentUser) {
+        setIsLoggedIn(true);
+        setUserProfilePicture(currentUser.photoURL);
+      }
+      onClose();
     } catch (error) {
       console.error(error);
     }
   };
 
-  const handleSignOut = () => {
-    logOut();
-    setIsLoggedIn(false);
-    toggleModal();
+  const handleSignOut = async () => {
+    try {
+      await logOut();
+      setIsLoggedIn(false);
+      setUserProfilePicture(null);
+      onClose();
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
-    <>
-      <TouchableOpacity style={styles.profileButton} onPress={toggleModal}>
-        <Image
-          source={{ uri: DEFAULT_PROFILE_PICTURE_URL }}
-          style={styles.profileImage}
-        />
-      </TouchableOpacity>
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={toggleModal}
-      >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <TouchableOpacity onPress={toggleModal} style={styles.closeButton}>
-              <Text style={styles.closeButtonText}>X</Text>
-            </TouchableOpacity>
-            <Text style={styles.modalText}>Perfil del Usuario</Text>
-            {!isLoggedIn ? (
-              <>
-                <TouchableOpacity style={styles.authButton}>
-                  <Text style={styles.authButtonText}>Registrarse</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.authButton}>
-                  <Text style={styles.authButtonText}>Iniciar sesión</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.authButton} onPress={handleSignInWithGoogle}>
-                  <Text style={styles.authButtonText}>Iniciar con Google</Text>
-                </TouchableOpacity>
-              </>
-            ) : (
-              <>
-                <TouchableOpacity style={styles.authButton}>
-                  <Text style={styles.authButtonText}>Lista de Deseados</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.authButton} onPress={handleSignOut}>
-                  <Text style={styles.authButtonText}>Cerrar Sesión</Text>
-                </TouchableOpacity>
-              </>
-            )}
-          </View>
+    <Modal
+      animationType="slide"
+      transparent={true}
+      visible={visible}
+      onRequestClose={onClose}
+    >
+      <View style={styles.modalContainer}>
+        <View style={styles.modalContent}>
+          <TouchableOpacity onPress={onClose} style={styles.closeButton}>
+            <Text style={styles.closeButtonText}>X</Text>
+          </TouchableOpacity>
+          <Text style={styles.modalText}>Perfil del Usuario</Text>
+          {!isLoggedIn ? (
+            <>
+              <TouchableOpacity style={styles.authButton}>
+                <Text style={styles.authButtonText}>Registrarse</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.authButton}>
+                <Text style={styles.authButtonText}>Iniciar sesión</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.authButton} onPress={handleSignInWithGoogle}>
+                <Text style={styles.authButtonText}>Iniciar con Google</Text>
+              </TouchableOpacity>
+            </>
+          ) : (
+            <>
+              <TouchableOpacity style={styles.authButton}>
+                <Text style={styles.authButtonText}>Lista de Deseados</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.authButton} onPress={handleSignOut}>
+                <Text style={styles.authButtonText}>Cerrar Sesión</Text>
+              </TouchableOpacity>
+            </>
+          )}
         </View>
-      </Modal>
-    </>
+      </View>
+    </Modal>
   );
 };
 
@@ -99,7 +109,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderRadius: 10,
     alignItems: 'center',
-    marginTop: 50,
+    marginTop: 50, 
     marginRight: 10, 
     position: 'relative',
   },
@@ -134,7 +144,7 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 5,
     width: '100%', 
-    alignItems: 'center',
+    alignItems: 'center', 
   },
   googleButtonText: {
     color: '#fff',

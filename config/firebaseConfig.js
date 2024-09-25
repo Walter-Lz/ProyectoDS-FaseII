@@ -28,7 +28,9 @@ const signInWithGoogle = async () => {
 const logOut = () => {
   return signOut(auth);
 };
-
+const getCurrentUser = () => {
+  return auth.currentUser;
+}
 const db = getFirestore(app);
 export { db };
-export { auth, signInWithGoogle, logOut };
+export { auth, signInWithGoogle, logOut, getCurrentUser};
