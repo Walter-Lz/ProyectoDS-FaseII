@@ -1,72 +1,68 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { useNavigation, NavigationProp } from '@react-navigation/native';
-import { RootStackParamList } from '../RootParametros'; // Ajusta la ruta
-import Navbar from '../NavBar'; 
-import { SafeAreaView } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, FlatList } from 'react-native';
+import CardProduct from '../CardProduct';
 
-export default function App() {
-  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
-  const handleCardProductClick = () => {
-    navigation.navigate('DetailsProduct', { idProduct: "id" });
-  };
+export default function HomePage() {
+  const [products, setProducts] = useState([]);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch('https://api.mercadolibre.com/sites/MLA/search?q=iphone');
+        const data = await response.json();
+        setProducts(data.results);
+      } catch (error) {
+        console.error('Error fetching products:', error);
+      }
+    };
+
+    fetchProducts();
+  }, []);
 
   return (
-    <SafeAreaView style={styles.container}>
-      <Navbar />
-      <View style={styles.home}>
-        <Text style={styles.title}>Ofertas Mercado Libre</Text>
-        <Text style={styles.subtitle}>¡Descubre las mejores ofertas del día!</Text>
-        {/* Sección de botones como enlaces a posibles ofertas */}
-        <TouchableOpacity style={styles.offerButton} onPress={handleCardProductClick}>
-          <Text style={styles.buttonText}>Ver Smartphones</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.offerButton}>
-          <Text style={styles.buttonText}>Ver Electrónica</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.offerButton}>
-          <Text style={styles.buttonText}>Ver Moda</Text>
-        </TouchableOpacity>
-      </View>
-    </SafeAreaView>
+    <View style={styles.container}>
+      <Text style={styles.title}>Inicio</Text>
+      <Text style={styles.description}>Bienvenido a la página de inicio.</Text>
+      <FlatList
+        data={products}
+        renderItem={({ item }) => (
+          <CardProduct
+            id={item.id}
+            image={item.thumbnail}
+            title={item.title}
+            price={item.price}
+            condition={item.condition}
+            availableQuantity={item.available_quantity}
+            seller={item.seller.nickname}
+          />
+        )}
+        contentContainerStyle={styles.list}
+      />
+    </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#121212', // Fondo oscuro
-  },
-  home: {
-    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: '#f5f5f5',
     padding: 16,
   },
   title: {
     fontSize: 32,
     fontWeight: 'bold',
-    color: '#1DB954', // Verde llamativo para el título
+    color: '#333',
     marginBottom: 16,
   },
-  subtitle: {
+  description: {
     fontSize: 18,
-    color: '#A1A1A1', // Gris para el subtítulo
-    marginBottom: 40,
+    color: '#666',
     textAlign: 'center',
+    marginBottom: 16,
   },
-  offerButton: {
-    backgroundColor: '#1DB954', // Verde brillante para los botones
-    paddingVertical: 12,
-    paddingHorizontal: 40,
-    borderRadius: 25,
-    marginBottom: 20,
-  },
-  buttonText: {
-    color: '#fff', // Texto blanco para los botones
-    fontSize: 16,
-    fontWeight: 'bold',
+  list: {
+    alignItems: 'center',
   },
 });

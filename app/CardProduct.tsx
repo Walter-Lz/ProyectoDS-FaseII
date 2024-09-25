@@ -1,39 +1,47 @@
-
+import React, { useState } from 'react';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { RootStackParamList } from './RootParametros';
-import { useState } from "react"
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 
 // Define la interfaz para las props
 interface CardProductProps {
-    id: string;
-    image: string;
-    title: string;
-    origin: string;
+  id: string;
+  image: string;
+  title: string;
+  price: number;
+  condition: string;
+  availableQuantity: number;
+  seller: string;
 }
-const CardProduct: React.FC<CardProductProps> = ({id, image, title, origin}) =>{
-    const [isFavorite, setIsFavorite] = useState(false);
-    const navigation = useNavigation<NavigationProp<RootStackParamList>>();
-    
-    const handleCardProductClick = ()=>{
-        navigation.navigate('DetailsProduct', {idProduct: id });
-    }    
-    return (
-        <TouchableOpacity style={styles.cardContainer} onPress={handleCardProductClick}>
-          <View style={styles.imageContainer}>
-             <Image source={{ uri: image.replace('http://', 'https://') }} style={styles.image} 
-             resizeMode='contain'/>
-          </View>
-          <View style={styles.content}>
-            <Text style={styles.title}>{title}</Text>
-            <Text style={styles.origin}>{origin}</Text>
-          </View>
-        </TouchableOpacity>
-      );
+
+const CardProduct: React.FC<CardProductProps> = ({ id, image, title, price, condition, availableQuantity, seller }) => {
+  const [isFavorite, setIsFavorite] = useState(false);
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+
+  const handleCardProductClick = () => {
+    navigation.navigate('DetailsProduct', { idProduct: id });
+  };
+
+  return (
+    <TouchableOpacity style={styles.cardContainer} onPress={handleCardProductClick}>
+      <View style={styles.imageContainer}>
+        <Image source={{ uri: image.replace('http://', 'https://') }} style={styles.image} resizeMode='contain' />
+      </View>
+      <View style={styles.content}>
+        <Text style={styles.title}>{title}</Text>
+        <Text style={styles.price}>Precio: ${price}</Text>
+        <Text style={styles.condition}>Condición: {condition}</Text>
+        <Text style={styles.availableQuantity}>Cantidad disponible: {availableQuantity}</Text>
+        <Text style={styles.seller}>Vendedor: {seller}</Text>
+      </View>
+    </TouchableOpacity>
+  );
 };
+
 export default CardProduct;
+
 const styles = StyleSheet.create({
-    cardContainer: {
+  cardContainer: {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
@@ -46,31 +54,47 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     backgroundColor: '#e6e6e6',
     cursor: 'pointer',
-    },
-    imageContainer: {
+  },
+  imageContainer: {
     position: 'relative',
     width: '100%',
     height: 150,
-    },
-    image: {
+  },
+  image: {
     width: '100%',
     height: '100%',
     resizeMode: 'cover',
     borderBottomWidth: 2,
     borderBottomColor: '#f0a500',
-    },
-    content: {
+  },
+  content: {
     padding: 10,
     textAlign: 'center',
-    },
-    title: {
+  },
+  title: {
     fontSize: 18,
     color: '#333',
     marginBottom: 10,
-    },
-    origin: {
+  },
+  origin: {
     fontSize: 14,
     color: '#777',
-    },
+  },
+  price: {
+    fontSize: 16,
+    color: '#000',
+    marginVertical: 5,
+  },
+  condition: {
+    fontSize: 14,
+    color: '#555',
+  },
+  availableQuantity: {
+    fontSize: 14,
+    color: '#555',
+  },
+  seller: {
+    fontSize: 14,
+    color: '#555',
+  },
 });
-
