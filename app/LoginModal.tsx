@@ -4,7 +4,7 @@ import { signInWithGoogle,logOut } from '../config/firebaseConfig';
 
 const LoginModal = () => {
   const [modalVisible, setModalVisible] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // Estado para verificar si el usuario ha iniciado sesión
+  const [isLoggedIn, setIsLoggedIn] = useState(false); 
   const DEFAULT_PROFILE_PICTURE_URL = "https://uxwing.com/wp-content/themes/uxwing/download/peoples-avatars/default-profile-picture-male-icon.png";
 
   const toggleModal = () => {
@@ -14,8 +14,8 @@ const LoginModal = () => {
   const handleSignInWithGoogle = async () => {
     try {
       signInWithGoogle();
-      setIsLoggedIn(true); // Actualiza el estado si el inicio de sesión es exitoso
-      toggleModal(); // Cierra el modal después de iniciar sesión
+      setIsLoggedIn(true); 
+      toggleModal();
     } catch (error) {
       console.error(error);
     }
@@ -31,7 +31,7 @@ const LoginModal = () => {
     <>
       <TouchableOpacity style={styles.profileButton} onPress={toggleModal}>
         <Image
-          source={{ uri: DEFAULT_PROFILE_PICTURE_URL }} // Reemplaza con la URL de la imagen del usuario
+          source={{ uri: DEFAULT_PROFILE_PICTURE_URL }}
           style={styles.profileImage}
         />
       </TouchableOpacity>
@@ -99,8 +99,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderRadius: 10,
     alignItems: 'center',
-    marginTop: 50, // Ajusta según sea necesario
-    marginRight: 10, // Ajusta según sea necesario
+    marginTop: 50,
+    marginRight: 10, 
     position: 'relative',
   },
   modalText: {
@@ -122,8 +122,8 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 5,
     marginBottom: 10,
-    width: '100%', // Asegura que todos los botones tengan el mismo ancho
-    alignItems: 'center', // Centra el texto dentro del botón
+    width: '100%', 
+    alignItems: 'center', 
   },
   authButtonText: {
     color: '#fff',
@@ -133,8 +133,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#4285F4',
     padding: 10,
     borderRadius: 5,
-    width: '100%', // Asegura que todos los botones tengan el mismo ancho
-    alignItems: 'center', // Centra el texto dentro del botón
+    width: '100%', 
+    alignItems: 'center',
   },
   googleButtonText: {
     color: '#fff',
