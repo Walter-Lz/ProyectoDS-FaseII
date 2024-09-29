@@ -9,8 +9,10 @@ interface Product {
   title: string;
   condition: string;
   price: number;
-  available_quantity: number;
-  thumbnail: string;
+  initial_quantity: number;
+  secure_url: string;
+  pictures: { secure_url: string }[];
+  warranty: string;
 }
 
 type DetailsProductRouteProp = RouteProp<RootStackParamList, 'DetailsProduct'>;
@@ -44,11 +46,10 @@ const DetailsProduct: React.FC = () => {
   if (!product) {
     return <Text>Product not found</Text>;
   }
-
   return (
     <View style={styles.container}>
       <View style={styles.imageSection}>
-        <Image source={{ uri: product.thumbnail.replace('http://', 'https://') }} style={styles.image} resizeMode='contain' />
+        <Image source={{ uri: product.pictures[0].secure_url }} style={styles.image} resizeMode='contain' />
       </View>
       <View style={styles.titleArea}>
         <Text style={styles.title}>{product.title}</Text>
@@ -57,7 +58,8 @@ const DetailsProduct: React.FC = () => {
       <View style={styles.infoSection}>
         <Text style={styles.objectiveTitle}>Descripción</Text>
         <Text style={styles.objectiveTitle}>Precio del Producto: {product.price}</Text>
-        <Text style={styles.objectiveTitle}>Cantidad Disponible: {product.available_quantity}</Text>
+        <Text style={styles.objectiveTitle}>Cantidad Disponible: {product.initial_quantity}</Text>
+        <Text style={styles.objectiveTitle}>{product.warranty ? product.warranty : "Sin garantía"}</Text>
       </View>
     </View>
   );
