@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Modal, Image } from 'react-native';
 import { signInWithGoogle, getCurrentUser, logOut } from '../config/firebaseConfig';
+import { useRouter } from 'expo-router';  // Asegúrate de estar utilizando useRouter de expo-router
 
 interface LoginModalProps {
   visible: boolean;
@@ -11,6 +12,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ visible, onClose }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false); 
   const [userProfilePicture, setUserProfilePicture] = useState<string | null>(null);
   const DEFAULT_PROFILE_PICTURE_URL = "https://uxwing.com/wp-content/themes/uxwing/download/peoples-avatars/default-profile-picture-male-icon.png";
+  const router = useRouter();  // Usa el hook useRouter para navegación
 
   useEffect(() => {
     const currentUser = getCurrentUser();
@@ -45,6 +47,11 @@ const LoginModal: React.FC<LoginModalProps> = ({ visible, onClose }) => {
     }
   };
 
+  const handleWishlist = () => {
+    onClose();
+    router.push('/wishList');  // Cambia la navegación a router.push
+  };
+
   return (
     <Modal
       animationType="slide"
@@ -72,7 +79,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ visible, onClose }) => {
             </>
           ) : (
             <>
-              <TouchableOpacity style={styles.authButton}>
+              <TouchableOpacity style={styles.authButton} onPress={handleWishlist}>
                 <Text style={styles.authButtonText}>Lista de Deseados</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.authButton} onPress={handleSignOut}>
