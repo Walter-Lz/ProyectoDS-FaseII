@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
-import { StyleSheet } from 'react-native';
-import { View, FlatList } from 'react-native';
+import {Modal,TouchableOpacity,Text, StyleSheet,View,FlatList,Dimensions } from 'react-native';
 import CardProduct from '../CardProduct';
 interface filteredProducts {
   id: string;
@@ -13,14 +12,15 @@ interface filteredProducts {
     nickname: string;
   };
 }
+
+const screenwidth  = Dimensions.get('window').width;
 const searchProducts = () => {
     const [search, setSearch] = useState('');
     const [categoryFilter, setCategoryFilter] = useState('');
     const [loading, setLoading] = useState(false);
     const [filteredProducts, setFilteredProducts] = useState([]);
     const [categories, setCategories] = useState([]);
-    const [showAdvancedSearch, setShowAdvancedSearch] = useState(false);;
-
+    const [showAdvancedSearch, setShowAdvancedSearch] = useState(false);
     useEffect( () => {
         const fetchFilterProduct = async () =>{
             try{
@@ -104,40 +104,42 @@ const searchProducts = () => {
           resetAdvancedFilters();
         }
       };
+
       return (
-        <View style ={styles.container}>
-          <View style ={styles.searchForm}>
+        <View style={styles.container}>
+          <View style={styles.searchForm}>
             <input
-              type="text"
+              style={styles.input}
+              placeholder="Search..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               onKeyDown={handleKeyDown}
             />
-            <button type="button" onClick={handleSearch}>
-              {("search")}
-            </button>
-            <button type="button" onClick={handleToggleAdvancedSearch}>
-              {showAdvancedSearch ? ('hide_search') :('show_search')}
-            </button>
-          </View>
-    
-          {showAdvancedSearch && (
-            <View style ={styles.advancedSearchForm}>
-              <View style ={styles.filterGroup}>
-                <label>{("filter_category")}:</label>
+            <TouchableOpacity style={styles.button} onPress={handleSearch}>
+              Search
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.button} onPress={handleToggleAdvancedSearch}>
+              {showAdvancedSearch ? 'Hide Advanced' : 'Advanced Search'}
+            </TouchableOpacity>
+      
+            {/* Aquí agregamos el contenedor para el filtro de categoría */}
+            {showAdvancedSearch && (
+              <View style={styles.filterGroup}>
+                <Text style={styles.modalTitle}>Filter Category</Text>
                 <select
                   value={categoryFilter}
                   onChange={(e) => setCategoryFilter(e.target.value)}
                 >
-                  <option value="">{("select_category")}</option>
+                  <option value="">{("Select category")}</option>
                   {categories.map((category, index) => (
                     <option key={index} value={category}>{category}</option>
                   ))}
                 </select>
               </View>
-            </View>
-          )}
-            <FlatList<filteredProducts>
+            )}
+          </View>
+      
+          <FlatList<filteredProducts>
             data={filteredProducts}
             renderItem={({ item }) => (
               <CardProduct
@@ -151,14 +153,11 @@ const searchProducts = () => {
               />
             )}
             contentContainerStyle={styles.list}
-            />
+          />
         </View>
       );
-    }
+}   
 const styles = StyleSheet.create({
-  list: {
-    alignItems: 'center',
-  },
   container: {
     flex: 1,
     justifyContent: 'center',
@@ -168,18 +167,21 @@ const styles = StyleSheet.create({
   },
   searchForm: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'space-between', // Mantiene los botones juntos a la izquierda
     alignItems: 'center',
     marginBottom: 20,
     paddingVertical: 15,
     paddingHorizontal: 10,
-    backgroundColor: '#fff', // Fondo blanco para destacarlo
-    borderRadius: 10, // Bordes redondeados para una mejor estética
+    backgroundColor: '#fff',
+    borderRadius: 10,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 3,
-    elevation: 2, // Sombra para dar efecto de elevación
+    elevation: 2,
+    maxWidth: 800,
+    width: screenwidth * 0.9, // Asegura que ocupe todo el ancho disponible
+    marginHorizontal: 'auto', 
   },
   input: {
     flex: 1,
@@ -196,54 +198,34 @@ const styles = StyleSheet.create({
     backgroundColor: '#007BFF', // Azul llamativo
     color: 'white',
     borderRadius: 8,
-    borderWidth: 0,
+    marginLeft: 10, // Añade un margen entre botones
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 3,
     elevation: 2,
   },
-  buttonHover: {
-    backgroundColor: '#0056b3', // Efecto hover más oscuro
-  },
-  advancedSearchForm: {
-    padding: 20,
-    backgroundColor: '#f4f4f9',
-    borderRadius: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
-    elevation: 2,
+  modalTitle: {
+    fontSize: 16,
+    marginRight: 10,
+    color: '#333',
   },
   filterGroup: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 10,
-    width: '100%',
-    maxWidth: 500,
-    justifyContent: 'space-between',
-  },
-  label: {
-    marginRight: 10,
-    flex: 1,
-    fontSize: 16,
-    color: '#333',
-    textAlign: 'right',
+    marginLeft: 10, // Espacio entre los botones y el selector de categoría
+    
   },
   select: {
-    flex: 2,
     padding: 12,
     borderWidth: 1,
     borderColor: '#ddd',
     borderRadius: 8,
     backgroundColor: '#fff',
   },
-  gallery: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'center',
-    padding: 20,
+  list: {
+    alignItems: 'center',
   },
 });
+
 export default searchProducts;
