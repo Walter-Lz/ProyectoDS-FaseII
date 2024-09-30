@@ -1,7 +1,11 @@
 import { RouteProp, useRoute } from '@react-navigation/native';
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Image } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import Icon from 'react-native-vector-icons/FontAwesome';
 import { RootStackParamList } from './RootParametros';
+import { getCurrentUser } from '../config/firebaseConfig'; // Asegúrate de tener esta función
+import { getFirestore, collection, doc, getDoc, updateDoc, setDoc } from 'firebase/firestore';
+import { db } from '../config/firebaseConfig'; // Asegúrate de tener configurado Firebase
 
 // Define la interfaz para las props
 interface Product {
@@ -22,6 +26,7 @@ const DetailsProduct: React.FC = () => {
   const { idProduct } = route.params;
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isWishlisted, setIsWishlisted] = useState(false);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -39,6 +44,71 @@ const DetailsProduct: React.FC = () => {
     fetchProduct();
   }, [idProduct]);
 
+  useEffect(() => {
+    const checkIfWishlisted = async () => {
+      try {
+        const user = getCurrentUser();
+        if (!user) {
+          console.error('No user is logged in');
+          return;
+        }
+        const carritoRef = doc(db, 'Carrito', user.uid);
+        const carritoDoc = await getDoc(carritoRef);
+
+        if (carritoDoc.exists()) {
+          const carritoData = carritoDoc.data();
+          const idProducts = carritoData.id_products || [];
+          if (idProducts.includes(idProduct)) {
+            setIsWishlisted(true);
+          } else {
+            setIsWishlisted(false);
+          }
+        } else {
+          setIsWishlisted(false);
+        }
+      } catch (error) {
+        console.error('Error checking wishlist status:', error);
+      }
+    };
+
+    checkIfWishlisted();
+  }, [idProduct]);
+
+  const handleWishlist = async () => {
+    try {
+      const user = getCurrentUser();
+      if (!user) {
+        console.error('No user is logged in');
+        return;
+      }
+      const carritoRef = doc(db, 'Carrito', user.uid);
+      const carritoDoc = await getDoc(carritoRef);
+
+      if (carritoDoc.exists()) {
+        const carritoData = carritoDoc.data();
+        const idProducts = carritoData.id_products || [];
+
+        if (idProducts.includes(idProduct)) {
+          console.log('El producto ya está registrado en la lista de deseados');
+        } else {
+          await updateDoc(carritoRef, {
+            id_products: [...idProducts, idProduct],
+          });
+          console.log('Producto agregado a la lista de deseados');
+          setIsWishlisted(true);
+        }
+      } else {
+        await setDoc(carritoRef, {
+          id_products: [idProduct],
+        });
+        console.log('Producto agregado a la lista de deseados');
+        setIsWishlisted(true);
+      }
+    } catch (error) {
+      console.error('Error adding product to wishlist:', error);
+    }
+  };
+
   if (loading) {
     return <Text>Loading...</Text>;
   }
@@ -46,8 +116,12 @@ const DetailsProduct: React.FC = () => {
   if (!product) {
     return <Text>Product not found</Text>;
   }
+
   return (
     <View style={styles.container}>
+      <TouchableOpacity style={styles.wishlistButton} onPress={handleWishlist}>
+        <Icon name={isWishlisted ? 'heart' : 'heart-o'} size={30} color="#900" />
+      </TouchableOpacity>
       <View style={styles.imageSection}>
         <Image source={{ uri: product.pictures[0].secure_url }} style={styles.image} resizeMode='contain' />
       </View>
@@ -109,5 +183,11 @@ const styles = StyleSheet.create({
     color: '#000000',
     marginBottom: 20,
     textAlign: 'center',
+  },
+  wishlistButton: {
+    position: 'absolute',
+    top: 20,
+    right: 20,
+    zIndex: 1,
   },
 });

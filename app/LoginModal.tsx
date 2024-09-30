@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Modal, Image } from 'react-native';
-import { signInWithGoogle, getCurrentUser, logOut } from '../config/firebaseConfig';
+import { signInWithGoogle, getCurrentUser, logOut, db } from '../config/firebaseConfig';
 import { useRouter } from 'expo-router';  // Asegúrate de estar utilizando useRouter de expo-router
+import { doc, setDoc } from 'firebase/firestore'; // Importa las funciones necesarias de Firestore
 
 interface LoginModalProps {
   visible: boolean;
@@ -29,6 +30,12 @@ const LoginModal: React.FC<LoginModalProps> = ({ visible, onClose }) => {
       if (currentUser) {
         setIsLoggedIn(true);
         setUserProfilePicture(currentUser.photoURL);
+
+        // Crear un nuevo documento en la colección Carrito
+        const carritoRef = doc(db, 'Carrito', currentUser.uid);
+        await setDoc(carritoRef, {
+          id_products: [],
+        });
       }
       onClose();
     } catch (error) {
