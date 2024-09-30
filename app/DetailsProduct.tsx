@@ -6,6 +6,7 @@ import { RootStackParamList } from './RootParametros';
 import { getCurrentUser } from '../config/firebaseConfig'; // Asegúrate de tener esta función
 import { getFirestore, collection, doc, getDoc, updateDoc, setDoc } from 'firebase/firestore';
 import { db } from '../config/firebaseConfig'; // Asegúrate de tener configurado Firebase
+import {GetItem} from '../config/ApiRequest';
 
 // Define la interfaz para las props
 interface Product {
@@ -31,8 +32,7 @@ const DetailsProduct: React.FC = () => {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const response = await fetch(`https://api.mercadolibre.com/items/${idProduct}`);
-        const data = await response.json();
+        const data = await GetItem(idProduct); // Llamada a la APIRquest
         setProduct(data);
         setLoading(false);
       } catch (error) {

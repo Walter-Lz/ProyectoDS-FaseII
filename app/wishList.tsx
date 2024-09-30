@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, Image, StyleSheet } from 'react-native';
+import {WishlistUser} from '../config/ApiRequest';
 
 interface Product {
   id: string;
@@ -17,8 +18,7 @@ const Wishlist: React.FC = () => {
     const fetchWishlist = async () => {
       try {
         // Reemplaza esta URL con la URL de tu API para obtener la lista de deseados del usuario
-        const response = await fetch('https://api.example.com/user/wishlist');
-        const data = await response.json();
+        const data = await WishlistUser();
         setWishlist(data);
         setLoading(false);
       } catch (error) {

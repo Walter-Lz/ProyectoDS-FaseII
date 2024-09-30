@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Modal, TouchableOpacity, Text, StyleSheet, View, FlatList, Dimensions } from 'react-native';
 import CardProduct from '../CardProduct';
+import { GetCategories, SearchProduct, GetALLProductsCategory} from '../../config/ApiRequest';
 
 interface filteredProducts {
   id: string;
