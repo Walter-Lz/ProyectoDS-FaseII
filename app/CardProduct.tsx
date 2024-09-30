@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { RootStackParamList } from './RootParametros';
-import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, Dimensions } from 'react-native';
 
 // Define la interfaz para las props
 interface CardProductProps {
@@ -10,11 +10,9 @@ interface CardProductProps {
   title: string;
   price: number;
   condition: string;
-  availableQuantity: number;
-  seller: string;
 }
 
-const CardProduct: React.FC<CardProductProps> = ({ id, image, title, price, condition, availableQuantity, seller }) => {
+const CardProduct: React.FC<CardProductProps> = ({ id, image, title, price, condition }) => {
   const [isFavorite, setIsFavorite] = useState(false);
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
@@ -29,10 +27,8 @@ const CardProduct: React.FC<CardProductProps> = ({ id, image, title, price, cond
       </View>
       <View style={styles.content}>
         <Text style={styles.title}>{title}</Text>
-        <Text style={styles.price}>Precio: ${price}</Text>
-        <Text style={styles.condition}>Condición: {condition}</Text>
-        <Text style={styles.availableQuantity}>Cantidad disponible: {availableQuantity}</Text>
-        <Text style={styles.seller}>Vendedor: {seller}</Text>
+        <Text style={styles.price}>${price}</Text>
+        <Text style={styles.condition}>{condition}</Text>
       </View>
     </TouchableOpacity>
   );
@@ -40,23 +36,23 @@ const CardProduct: React.FC<CardProductProps> = ({ id, image, title, price, cond
 
 export default CardProduct;
 
+const screenWidth = Dimensions.get('window').width;
+
 const styles = StyleSheet.create({
   cardContainer: {
-    display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    width: 250,
+    width: screenWidth > 600 ? 300 : screenWidth * 0.8,
     margin: 10,
     shadowColor: 'rgba(0, 0, 0, 0.2)',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.8,
     borderRadius: 10,
     overflow: 'hidden',
-    backgroundColor: '#e6e6e6',
+    backgroundColor: '#fff',
     cursor: 'pointer',
   },
   imageContainer: {
-    position: 'relative',
     width: '100%',
     height: 150,
   },
@@ -65,7 +61,7 @@ const styles = StyleSheet.create({
     height: '100%',
     resizeMode: 'cover',
     borderBottomWidth: 2,
-    borderBottomColor: '#f0a500',
+    borderBottomColor: '#3483FA',
   },
   content: {
     padding: 10,
@@ -76,24 +72,12 @@ const styles = StyleSheet.create({
     color: '#333',
     marginBottom: 10,
   },
-  origin: {
-    fontSize: 14,
-    color: '#777',
-  },
   price: {
     fontSize: 16,
     color: '#000',
     marginVertical: 5,
   },
   condition: {
-    fontSize: 14,
-    color: '#555',
-  },
-  availableQuantity: {
-    fontSize: 14,
-    color: '#555',
-  },
-  seller: {
     fontSize: 14,
     color: '#555',
   },

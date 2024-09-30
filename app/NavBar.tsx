@@ -4,7 +4,7 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons'; 
 import LoginModal from './LoginModal';
 
-const Navbar = () => {
+const Navbar = ({ isDarkTheme, toggleTheme }) => {
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [menuVisible, setMenuVisible] = useState(false); 
@@ -33,14 +33,13 @@ const Navbar = () => {
   };
 
   return (
-    <View style={styles.navbar}>
-      <Text style={styles.logo}>Mercado TEC</Text>
+    <View style={[styles.navbar, isDarkTheme ? styles.darkNavbar : styles.lightNavbar]}>
+      <Text style={[styles.logo, isDarkTheme ? styles.darkText : styles.lightText]}>Mercado TEC</Text>
 
       {screenWidth < 600 ? (
-        // Menú hamburguesa en dispositivos móviles
         <View style={styles.smallScreenContainer}>
           <TouchableOpacity onPress={toggleMenu}>
-            <Ionicons name="menu" size={30} color="#fff" />
+            <Ionicons name="menu" size={30} color={isDarkTheme ? "#fff" : "#000"} />
           </TouchableOpacity>
           <TouchableOpacity style={styles.profileButtonSmallScreen} onPress={toggleModal}>
             <Image
@@ -50,14 +49,12 @@ const Navbar = () => {
           </TouchableOpacity>
         </View>
       ) : (
-        // Menú normal en pantallas más grandes
         <View style={styles.navItemsContainer}>
           <View style={styles.navItems}>
             {[
               { label: 'Inicio', route: '/' },
-              { label: 'Calendario', route: '/calendar' },
-              { label: 'Sobre Nosotros', route: '/about' },
-              { label: 'Búsqueda', route: '/searchProducts' }
+              { label: 'Búsqueda', route: '/searchProducts' },
+              { label: 'Sobre Nosotros', route: '/about' }
             ].map((item, index) => (
               <TouchableOpacity
                 key={index}
@@ -69,6 +66,7 @@ const Navbar = () => {
                   style={[
                     styles.navItem,
                     hoveredItem === item.label && styles.navItemHovered,
+                    isDarkTheme ? styles.darkText : styles.lightText,
                   ]}
                 >
                   {item.label}
@@ -76,6 +74,9 @@ const Navbar = () => {
               </TouchableOpacity>
             ))}
           </View>
+          <TouchableOpacity onPress={toggleTheme} style={styles.themeButton}>
+            <Ionicons name={isDarkTheme ? "sunny" : "moon"} size={24} color={isDarkTheme ? "#fff" : "#000"} />
+          </TouchableOpacity>
           <TouchableOpacity style={styles.profileButton} onPress={toggleModal}>
             <Image
               source={{ uri: 'https://via.placeholder.com/150' }}
@@ -86,7 +87,7 @@ const Navbar = () => {
       )}
 
       {menuVisible && screenWidth < 600 && (
-        <View style={styles.menu}>
+        <View style={[styles.menu, isDarkTheme ? styles.darkMenu : styles.lightMenu]}>
           {[
             { label: 'Inicio', route: '/' },
             { label: 'Calendario', route: '/calendar' },
@@ -103,6 +104,7 @@ const Navbar = () => {
                 style={[
                   styles.navItem,
                   hoveredItem === item.label && styles.navItemHovered,
+                  isDarkTheme ? styles.darkText : styles.lightText,
                 ]}
               >
                 {item.label}
@@ -122,14 +124,24 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#333',
     padding: 15,
     zIndex: 100, 
   },
+  darkNavbar: {
+    backgroundColor: '#333',
+  },
+  lightNavbar: {
+    backgroundColor: '#fff',
+  },
   logo: {
-    color: '#fff',
     fontSize: 20,
     fontWeight: 'bold',
+  },
+  darkText: {
+    color: '#fff',
+  },
+  lightText: {
+    color: '#000',
   },
   navItemsContainer: {
     flexDirection: 'row',
@@ -140,7 +152,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   navItem: {
-    color: '#fff',
     marginHorizontal: 8, 
     fontSize: 16,
   },
@@ -168,10 +179,18 @@ const styles = StyleSheet.create({
     top: 60, 
     left: 0,
     right: 0,
-    backgroundColor: '#333',
     paddingVertical: 20,
     zIndex: 9999, 
     alignItems: 'center',
+  },
+  darkMenu: {
+    backgroundColor: '#333',
+  },
+  lightMenu: {
+    backgroundColor: '#fff',
+  },
+  themeButton: {
+    marginRight: 10,
   },
 });
 
