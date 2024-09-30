@@ -56,7 +56,8 @@ const Navbar = () => {
             {[
               { label: 'Inicio', route: '/' },
               { label: 'Calendario', route: '/calendar' },
-              { label: 'Sobre Nosotros', route: '/about' }
+              { label: 'Sobre Nosotros', route: '/about' },
+              { label: 'Búsqueda', route: '/searchProducts' }
             ].map((item, index) => (
               <TouchableOpacity
                 key={index}
@@ -89,7 +90,8 @@ const Navbar = () => {
           {[
             { label: 'Inicio', route: '/' },
             { label: 'Calendario', route: '/calendar' },
-            { label: 'Sobre Nosotros', route: '/about' }
+            { label: 'Sobre Nosotros', route: '/about' },
+            { label: 'Búsqueda', route: '/searchProducts' }
           ].map((item, index) => (
             <TouchableOpacity
               key={index}
