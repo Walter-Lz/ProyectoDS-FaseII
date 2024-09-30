@@ -1,68 +1,80 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, FlatList } from 'react-native';
-import CardProduct from '../CardProduct';
+import React from 'react';
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
 
-export default function HomePage() {
-  const [products, setProducts] = useState([]);
+const daysOfWeek = [
+  { day: 'Lunes', promotion: 'Promoción del lunes' },
+  { day: 'Martes', promotion: 'Promoción del martes' },
+  { day: 'Miércoles', promotion: 'Promoción del miércoles' },
+  { day: 'Jueves', promotion: 'Promoción del jueves' },
+  { day: 'Viernes', promotion: 'Promoción del viernes' },
+  { day: 'Sábado', promotion: 'Promoción del sábado' },
+  { day: 'Domingo', promotion: 'Promoción del domingo' },
+];
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const response = await fetch('https://api.mercadolibre.com/sites/MLA/search?q=iphone');
-        const data = await response.json();
-        setProducts(data.results);
-      } catch (error) {
-        console.error('Error fetching products:', error);
-      }
-    };
-
-    fetchProducts();
-  }, []);
-
+export default function HomePage({ isDarkTheme }) {
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Inicio</Text>
-      <Text style={styles.description}>Bienvenido a la página de inicio.</Text>
-      <FlatList
-        data={products}
-        renderItem={({ item }) => (
-          <CardProduct
-            id={item.id}
-            image={item.thumbnail}
-            title={item.title}
-            price={item.price}
-            condition={item.condition}
-            availableQuantity={item.available_quantity}
-            seller={item.seller.nickname}
-          />
-        )}
-        contentContainerStyle={styles.list}
-      />
-    </View>
+    <ScrollView contentContainerStyle={[styles.container, isDarkTheme ? styles.darkContainer : styles.lightContainer]}>
+      <Text style={[styles.title, isDarkTheme ? styles.darkText : styles.lightText]}>Promociones Semanales</Text>
+      <View style={styles.calendar}>
+        {daysOfWeek.map((item, index) => (
+          <View key={index} style={[styles.cell, isDarkTheme ? styles.darkCell : styles.lightCell]}>
+            <Text style={[styles.day, isDarkTheme ? styles.darkText : styles.lightText]}>{item.day}</Text>
+            <Text style={[styles.promotion, isDarkTheme ? styles.darkText : styles.lightText]}>{item.promotion}</Text>
+          </View>
+        ))}
+      </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#f5f5f5',
+    flexGrow: 1,
     padding: 16,
   },
+  darkContainer: {
+    backgroundColor: '#333',
+  },
+  lightContainer: {
+    backgroundColor: '#fff',
+  },
   title: {
-    fontSize: 32,
+    fontSize: 24,
     fontWeight: 'bold',
-    color: '#333',
     marginBottom: 16,
-  },
-  description: {
-    fontSize: 18,
-    color: '#666',
     textAlign: 'center',
-    marginBottom: 16,
   },
-  list: {
-    alignItems: 'center',
+  darkText: {
+    color: '#fff',
+  },
+  lightText: {
+    color: '#000',
+  },
+  calendar: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(7, 1fr)',
+    gap: 16,
+  },
+  cell: {
+    padding: 16,
+    borderWidth: 1,
+    borderRadius: 8,
+    textAlign: 'center',
+  },
+  darkCell: {
+    borderColor: '#555',
+    backgroundColor: '#444',
+  },
+  lightCell: {
+    borderColor: '#ccc',
+    backgroundColor: '#f9f9f9',
+  },
+  day: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 8,
+  },
+  promotion: {
+    fontSize: 16,
   },
 });
