@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Modal, Image } from 'react-native';
 import { signInWithGoogle, getCurrentUser, logOut, db } from '../config/firebaseConfig';
-import { useRouter } from 'expo-router';  // Asegúrate de estar utilizando useRouter de expo-router
-import { doc, setDoc } from 'firebase/firestore'; // Importa las funciones necesarias de Firestore
+import { useRouter } from 'expo-router';
+import { doc, setDoc } from 'firebase/firestore';
+import { useTheme } from './ThemeContext';
 
 interface LoginModalProps {
   visible: boolean;
@@ -10,10 +11,11 @@ interface LoginModalProps {
 }
 
 const LoginModal: React.FC<LoginModalProps> = ({ visible, onClose }) => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false); 
+  const { isDarkTheme } = useTheme();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userProfilePicture, setUserProfilePicture] = useState<string | null>(null);
   const DEFAULT_PROFILE_PICTURE_URL = "https://uxwing.com/wp-content/themes/uxwing/download/peoples-avatars/default-profile-picture-male-icon.png";
-  const router = useRouter();  // Usa el hook useRouter para navegación
+  const router = useRouter();
 
   useEffect(() => {
     const currentUser = getCurrentUser();
@@ -33,67 +35,48 @@ const LoginModal: React.FC<LoginModalProps> = ({ visible, onClose }) => {
 
         // Crear un nuevo documento en la colección Carrito
         const carritoRef = doc(db, 'Carrito', currentUser.uid);
-        await setDoc(carritoRef, {
-          id_products: [],
-        });
+        await setDoc(carritoRef, {});
       }
-      onClose();
     } catch (error) {
-      console.error(error);
+      console.error("Error signing in with Google: ", error);
     }
   };
 
-  const handleSignOut = async () => {
+  const handleLogOut = async () => {
     try {
       await logOut();
       setIsLoggedIn(false);
       setUserProfilePicture(null);
-      onClose();
     } catch (error) {
-      console.error(error);
+      console.error("Error logging out: ", error);
     }
   };
 
-  const handleWishlist = () => {
-    onClose();
-    router.push('/wishList');  // Cambia la navegación a router.push
-  };
-
   return (
-    <Modal
-      animationType="slide"
-      transparent={true}
-      visible={visible}
-      onRequestClose={onClose}
-    >
+    <Modal visible={visible} transparent={true} animationType="slide">
       <View style={styles.modalContainer}>
-        <View style={styles.modalContent}>
-          <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-            <Text style={styles.closeButtonText}>X</Text>
+        <View style={isDarkTheme ? styles.modalContentDark : styles.modalContent}>
+          <Image
+            source={{ uri: userProfilePicture || DEFAULT_PROFILE_PICTURE_URL }}
+            style={styles.profilePicture}
+          />
+          <Text style={isDarkTheme ? styles.modalTitleDark : styles.modalTitle}>
+            {isLoggedIn ? 'Welcome!' : 'Please log in'}
+          </Text>
+          <TouchableOpacity
+            style={isDarkTheme ? styles.buttonDark : styles.button}
+            onPress={isLoggedIn ? handleLogOut : handleSignInWithGoogle}
+          >
+            <Text style={isDarkTheme ? styles.buttonTextDark : styles.buttonText}>
+              {isLoggedIn ? 'Log Out' : 'Sign In with Google'}
+            </Text>
           </TouchableOpacity>
-          <Text style={styles.modalText}>Perfil del Usuario</Text>
-          {!isLoggedIn ? (
-            <>
-              <TouchableOpacity style={styles.authButton}>
-                <Text style={styles.authButtonText}>Registrarse</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.authButton}>
-                <Text style={styles.authButtonText}>Iniciar sesión</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.authButton} onPress={handleSignInWithGoogle}>
-                <Text style={styles.authButtonText}>Iniciar con Google</Text>
-              </TouchableOpacity>
-            </>
-          ) : (
-            <>
-              <TouchableOpacity style={styles.authButton} onPress={handleWishlist}>
-                <Text style={styles.authButtonText}>Lista de Deseados</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.authButton} onPress={handleSignOut}>
-                <Text style={styles.authButtonText}>Cerrar Sesión</Text>
-              </TouchableOpacity>
-            </>
-          )}
+          <TouchableOpacity
+            style={isDarkTheme ? styles.buttonDark : styles.button}
+            onPress={onClose}
+          >
+            <Text style={isDarkTheme ? styles.buttonTextDark : styles.buttonText}>Close</Text>
+          </TouchableOpacity>
         </View>
       </View>
     </Modal>
@@ -101,21 +84,13 @@ const LoginModal: React.FC<LoginModalProps> = ({ visible, onClose }) => {
 };
 
 const styles = StyleSheet.create({
-  profileButton: {
-    marginLeft: 15,
-    borderRadius: 25,
-    overflow: 'hidden',
-  },
-  profileImage: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-  },
   modalContainer: {
     flex: 1,
     justifyContent: 'flex-start',
     alignItems: 'flex-end',
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    paddingTop: 40,
+    paddingRight: 20,
   },
   modalContent: {
     width: 300,
@@ -123,50 +98,51 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderRadius: 10,
     alignItems: 'center',
-    marginTop: 50, 
-    marginRight: 10, 
-    position: 'relative',
   },
-  modalText: {
-    fontSize: 18,
+  modalContentDark: {
+    width: 300,
+    padding: 20,
+    backgroundColor: '#333',
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  profilePicture: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
     marginBottom: 20,
   },
-  closeButton: {
-    position: 'absolute',
-    top: 10,
-    right: 10,
-    backgroundColor: 'transparent',
-  },
-  closeButtonText: {
-    color: '#000',
+  modalTitle: {
     fontSize: 18,
+    marginBottom: 20,
+    color: '#3483FA',
   },
-  authButton: {
-    backgroundColor: '#1DB954',
-    padding: 10,
-    borderRadius: 5,
+  modalTitleDark: {
+    fontSize: 18,
+    marginBottom: 20,
+    color: '#FFDD00',
+  },
+  button: {
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    backgroundColor: '#3483FA',
+    borderRadius: 8,
     marginBottom: 10,
-    width: '100%', 
-    alignItems: 'center', 
   },
-  authButtonText: {
+  buttonDark: {
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    backgroundColor: '#FFDD00',
+    borderRadius: 8,
+    marginBottom: 10,
+  },
+  buttonText: {
     color: '#fff',
-    fontSize: 16,
+    fontWeight: 'bold',
   },
-  googleButton: {
-    backgroundColor: '#4285F4',
-    padding: 10,
-    borderRadius: 5,
-    width: '100%', 
-    alignItems: 'center', 
-  },
-  googleButtonText: {
-    color: '#fff',
-    fontSize: 16,
-  },
-  loggedInText: {
-    fontSize: 18,
+  buttonTextDark: {
     color: '#000',
+    fontWeight: 'bold',
   },
 });
 

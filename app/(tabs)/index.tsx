@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { useTheme } from '../ThemeContext';
 
 const daysOfWeek = [
   { day: 'Lunes', promotion: 'Promoción del lunes' },
@@ -11,7 +12,9 @@ const daysOfWeek = [
   { day: 'Domingo', promotion: 'Promoción del domingo' },
 ];
 
-export default function HomePage({ isDarkTheme }) {
+export default function HomePage() {
+  const { isDarkTheme } = useTheme(); // Access the global theme state
+
   return (
     <ScrollView contentContainerStyle={[styles.container, isDarkTheme ? styles.darkContainer : styles.lightContainer]}>
       <Text style={[styles.title, isDarkTheme ? styles.darkText : styles.lightText]}>Promociones Semanales</Text>

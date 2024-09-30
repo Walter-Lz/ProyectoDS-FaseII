@@ -3,11 +3,13 @@ import { View, Text, TouchableOpacity, StyleSheet, Image, Dimensions } from 'rea
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons'; 
 import LoginModal from './LoginModal';
+import { useTheme } from './ThemeContext';
 
-const Navbar = ({ isDarkTheme, toggleTheme }) => {
+const Navbar = () => {
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
-  const [menuVisible, setMenuVisible] = useState(false); 
+  const [menuVisible, setMenuVisible] = useState(false);
+  const { isDarkTheme, toggleTheme } = useTheme(); 
   const router = useRouter();
   const screenWidth = Dimensions.get('window').width;
 
@@ -54,7 +56,6 @@ const Navbar = ({ isDarkTheme, toggleTheme }) => {
             {[
               { label: 'Inicio', route: '/' },
               { label: 'Búsqueda', route: '/searchProducts' },
-              { label: 'Sobre Nosotros', route: '/about' }
             ].map((item, index) => (
               <TouchableOpacity
                 key={index}
