@@ -2,6 +2,7 @@ import { RouteProp, useRoute } from '@react-navigation/native';
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Image } from 'react-native';
 import { RootStackParamList } from './RootParametros';
+import {GetItem} from '../config/ApiRequest';
 
 // Define la interfaz para las props
 interface Product {
@@ -26,8 +27,7 @@ const DetailsProduct: React.FC = () => {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const response = await fetch(`https://api.mercadolibre.com/items/${idProduct}`);
-        const data = await response.json();
+        const data = await GetItem(idProduct); // Llamada a la APIRquest
         setProduct(data);
         setLoading(false);
       } catch (error) {
