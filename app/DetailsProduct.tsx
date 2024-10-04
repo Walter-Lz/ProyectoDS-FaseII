@@ -151,11 +151,11 @@ const styles = StyleSheet.create({
   imageSection: {
     display: 'flex',
     justifyContent: 'center',
+    alignItems: 'center',
     marginBottom: 20,
   },
   image: {
     width: '100%',
-    maxWidth: 500,
     height: 300,
     borderRadius: 15,
     shadowColor: 'rgba(0, 0, 0, 0.2)',
