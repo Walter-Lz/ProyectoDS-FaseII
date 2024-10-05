@@ -1,6 +1,6 @@
 import { RouteProp, useRoute } from '@react-navigation/native';
 import React, { useState, useEffect,useRef } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, Dimensions,FlatList } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, Dimensions,SafeAreaView } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { RootStackParamList } from './RootParametros';
 import { getCurrentUser } from '../config/firebaseConfig'; // Asegúrate de tener esta función
@@ -126,7 +126,8 @@ const DetailsProduct: React.FC = () => {
   };
  
   return (
-    <View style={styles.container}>
+  <SafeAreaView style={styles.safeArea}>
+    <ScrollView style={styles.container}>
       <TouchableOpacity style={styles.wishlistButton} onPress={handleWishlist}>
         <Icon name={isWishlisted ? 'heart' : 'heart-o'} size={30} color="#900" />
       </TouchableOpacity>
@@ -156,6 +157,7 @@ const DetailsProduct: React.FC = () => {
           </TouchableOpacity>
         ))}
       </ScrollView>
+
       <View style={styles.titleArea}>
         <Text style={styles.title}>{product.title}</Text>
         <Text style={styles.objectiveTitle}>Estado del producto: {product.condition}</Text>
@@ -166,19 +168,23 @@ const DetailsProduct: React.FC = () => {
         <Text style={styles.objectiveTitle}>Cantidad Disponible: {product.initial_quantity}</Text>
         <Text style={styles.objectiveTitle}>{product.warranty ? product.warranty : "Sin garantía"}</Text>
       </View>
-    </View>
+     </ScrollView>
+    </SafeAreaView> 
   );
 };
 
 export default DetailsProduct;
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
   container: {
     padding: 20,
     maxWidth: 900,
     marginLeft: 'auto',
     marginRight: 'auto',
     flex:1,
-    justifyContent: 'center',
   },
   imageSection: {
     justifyContent: 'center',
@@ -207,7 +213,7 @@ const styles = StyleSheet.create({
   },
   infoSection: {
     textAlign: 'center',
-    alignItems: 'center',
+    paddingHorizontal: 10, 
   },
   titleArea: {
     display: 'flex',
@@ -216,15 +222,15 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   title: {
-    fontSize: 32,
+    fontSize: 24,
     color: '#000000',
-    marginBottom: 20,
+    marginBottom: 10,
     textAlign: 'center',
   },
   objectiveTitle: {
-    fontSize: 24,
+    fontSize: 21,
     color: '#000000',
-    marginBottom: 20,
+    marginBottom: 10,
     textAlign: 'center',
   },
   wishlistButton: {
