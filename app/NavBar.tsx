@@ -37,7 +37,6 @@ const Navbar = () => {
   return (
     <View style={[styles.navbar, isDarkTheme ? styles.darkNavbar : styles.lightNavbar]}>
       <Text style={[styles.logo, isDarkTheme ? styles.darkText : styles.lightText]}>Mercado TEC</Text>
-
       {screenWidth < 600 ? (
         <View style={styles.smallScreenContainer}>
           <TouchableOpacity onPress={toggleMenu}>
@@ -75,9 +74,12 @@ const Navbar = () => {
               </TouchableOpacity>
             ))}
           </View>
+          
+
           <TouchableOpacity onPress={toggleTheme} style={styles.themeButton}>
-            <Ionicons name={isDarkTheme ? "sunny" : "moon"} size={24} color={isDarkTheme ? "#fff" : "#000"} />
-          </TouchableOpacity>
+           <Ionicons name={isDarkTheme ? "sunny" : "moon"} size={24} color={isDarkTheme ? "#fff" : "#000"} />
+         </TouchableOpacity>
+
           <TouchableOpacity style={styles.profileButton} onPress={toggleModal}>
             <Image
               source={{ uri: 'https://via.placeholder.com/150' }}
@@ -86,35 +88,36 @@ const Navbar = () => {
           </TouchableOpacity>
         </View>
       )}
-
-      {menuVisible && screenWidth < 600 && (
-        <View style={[styles.menu, isDarkTheme ? styles.darkMenu : styles.lightMenu]}>
-          {[
-            { label: 'Inicio', route: '/' },
-            { label: 'Calendario', route: '/calendar' },
-            { label: 'Sobre Nosotros', route: '/about' },
-            { label: 'Búsqueda', route: '/searchProducts' }
-          ].map((item, index) => (
-            <TouchableOpacity
-              key={index}
-              onPressIn={() => handleMouseEnter(item.label)}
-              onPressOut={handleMouseLeave}
-              onPress={() => navigateTo(item.route)}
-            >
-              <Text
-                style={[
-                  styles.navItem,
-                  hoveredItem === item.label && styles.navItemHovered,
-                  isDarkTheme ? styles.darkText : styles.lightText,
-                ]}
-              >
-                {item.label}
-              </Text>
+    {menuVisible && screenWidth < 600 && (
+    <View style={styles.menu}>
+          <View style={styles.navItems}>
+            <TouchableOpacity onPress={toggleTheme} style={styles.themeButton}>
+                <Ionicons name={isDarkTheme ? "sunny" : "moon"} size={24} color={isDarkTheme ? "#fff" : "#000"} />
             </TouchableOpacity>
-          ))}
-        </View>
-      )}
-
+          </View>
+      {[
+        { label: 'Inicio', route: '/' },
+        { label: 'Búsqueda', route: '/searchProducts' },
+      ].map((item, index) => (
+        <TouchableOpacity
+          key={index}
+          onPressIn={() => handleMouseEnter(item.label)}
+          onPressOut={handleMouseLeave}
+          onPress={() => navigateTo(item.route)}
+        >
+          <Text
+            style={[
+              styles.navItem,
+              hoveredItem === item.label && styles.navItemHovered,
+              isDarkTheme ? styles.darkText : styles.lightText,
+            ]}
+          >
+            {item.label}
+          </Text>
+        </TouchableOpacity>
+      ))}
+  </View>
+)}
       <LoginModal visible={modalVisible} onClose={toggleModal} />
     </View>
   );
