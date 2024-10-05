@@ -124,7 +124,9 @@ const DetailsProduct: React.FC = () => {
       setCurrentIndex(index);
     } 
   };
- 
+  const formatPrice = (price: number) => {
+    return `₡${price.toLocaleString('es-CR')}`;
+  };
   return (
   <SafeAreaView style={styles.safeArea}>
     <ScrollView style={styles.container}>
@@ -164,7 +166,7 @@ const DetailsProduct: React.FC = () => {
       </View>
       <View style={styles.infoSection}>
         <Text style={styles.objectiveTitle}>Descripción</Text>
-        <Text style={styles.objectiveTitle}>Precio del Producto: {product.price ? product.price : "No establecido" }</Text>
+        <Text style={styles.objectiveTitle}>Precio del Producto: {product.price ? formatPrice(product.price) : "No establecido" }</Text>
         <Text style={styles.objectiveTitle}>Cantidad Disponible: {product.initial_quantity}</Text>
         <Text style={styles.objectiveTitle}>{product.warranty ? product.warranty : "Sin garantía"}</Text>
       </View>
