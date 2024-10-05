@@ -33,7 +33,7 @@ const CardProduct: React.FC<CardProductProps> = ({ id, image, title, price, cond
       </View>
       <View style={styles.content}>
         <Text style={isDarkTheme ? styles.titleDark : styles.title}>{title}</Text>
-        <Text style={isDarkTheme ? styles.priceDark : styles.price}>{formatPrice(price)}</Text>
+        <Text style={isDarkTheme ? styles.priceDark : styles.price}>{price? formatPrice(price): "Precio no establecido." }</Text>
         <Text style={isDarkTheme ? styles.conditionDark : styles.condition}>{condition}</Text>
       </View>
     </TouchableOpacity>

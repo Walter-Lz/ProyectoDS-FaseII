@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Modal, TouchableOpacity, Text, StyleSheet, View, FlatList, Dimensions } from 'react-native';
+import {TouchableOpacity, Text, StyleSheet, View, FlatList, Dimensions } from 'react-native';
 import CardProduct from '../CardProduct';
 import { useTheme } from '../ThemeContext';
 import { GetCategories, SearchProduct, GetALLProductsCategory} from '../../config/ApiRequest';
@@ -15,7 +15,6 @@ interface filteredProducts {
     nickname: string;
   };
 }
-
 const screenwidth = Dimensions.get('window').width;
 
 const searchProducts = () => {
@@ -30,8 +29,7 @@ const searchProducts = () => {
   useEffect(() => {
     const fetchFilterProduct = async () => {
       try {
-        const categoryResponse = await fetch("https://api.mercadolibre.com/sites/MLA/categories");
-        const categoryData = await categoryResponse.json();
+        const categoryData = await GetCategories();
         setCategories(categoryData.map((categoria: { name: any; }) => categoria.name));
       } catch (err) {
         console.error('Error fetching categories:', err);
@@ -65,8 +63,7 @@ const searchProducts = () => {
   const fetchAllProductsCategory = async () => {
     setLoading(true);
     try {
-      const response = await fetch(`https://api.mercadolibre.com/sites/MLA/search?q=${categoryFilter}`);
-      const data = await response.json();
+      const data = await GetALLProductsCategory(categoryFilter);
       setFilteredProducts(data.results);
       setLoading(false);
     } catch (error) {
@@ -85,8 +82,7 @@ const searchProducts = () => {
     } else {
       setLoading(true);
       try {
-        const response = await fetch(`https://api.mercadolibre.com/sites/MLA/search?q=${search}`);
-        const data = await response.json();
+        const data = await SearchProduct(search);
         const fetchedProducts = data;
         const filtered = applyFilters(fetchedProducts);
         if (filtered.length === 0) {
