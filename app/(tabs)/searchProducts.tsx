@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import {TouchableOpacity, Text, StyleSheet, View, FlatList, Dimensions } from 'react-native';
+import {TouchableOpacity, Text, StyleSheet, View, FlatList, Dimensions, TextInput } from 'react-native';
 import CardProduct from '../CardProduct';
 import { useTheme } from '../ThemeContext';
 import { GetCategories, SearchProduct, GetALLProductsCategory} from '../../config/ApiRequest';
-
+import { Picker } from '@react-native-picker/picker';
 interface filteredProducts {
   id: string;
   title: string;
@@ -97,8 +97,8 @@ const searchProducts = () => {
     }
   };
 
-  const handleKeyDown = (event: { key: string; }) => {
-    if (event.key === 'Enter') {
+  const handleKeyDown = (event: {nativeEvent: { key: string; };}) => {
+    if (event.nativeEvent.key === 'Enter') {
       handleSearch();
     }
   };
@@ -113,12 +113,12 @@ const searchProducts = () => {
   return (
     <View style={isDarkTheme ? styles.containerDark : styles.container}>
       <View style={isDarkTheme ? styles.searchFormDark : styles.searchForm}>
-        <input
+        <TextInput
           style={isDarkTheme ? styles.inputDark : styles.input}
           placeholder="Search..."
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          onKeyDown={handleKeyDown}
+          onChangeText={setSearch}
+          onKeyPress={handleKeyDown}
         />
         <TouchableOpacity style={isDarkTheme ? styles.buttonDark : styles.button} onPress={handleSearch}>
           <Text style={isDarkTheme ? styles.buttonTextDark : styles.buttonText}>Search</Text>
@@ -130,16 +130,16 @@ const searchProducts = () => {
         {showAdvancedSearch && (
           <View style={styles.filterGroup}>
             <Text style={isDarkTheme ? styles.modalTitleDark : styles.modalTitle}>Filter Category</Text>
-            <select
+            <Picker
+              selectedValue={categoryFilter}
               style={isDarkTheme ? styles.selectDark : styles.select}
-              value={categoryFilter}
-              onChange={(e) => setCategoryFilter(e.target.value)}
+              onValueChange={(itemValue) => setCategoryFilter(itemValue)}
             >
-              <option value="">Select category</option>
+              <Picker.Item label="Select category" value="" />
               {categories.map((category, index) => (
-                <option key={index} value={category}>{category}</option>
+                <Picker.Item key={index} label={category} value={category} />
               ))}
-            </select>
+            </Picker>
           </View>
         )}
       </View>
