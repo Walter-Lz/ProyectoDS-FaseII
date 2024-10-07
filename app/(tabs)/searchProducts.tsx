@@ -17,6 +17,7 @@ interface filteredProducts {
 }
 const screenwidth = Dimensions.get('window').width;
 type PriceOrder= ''| 'Asc' | 'Desc';
+type ConditionPreference = '' | 'new' | 'used';
 const searchProducts = () => {
   const { isDarkTheme } = useTheme();
   const [search, setSearch] = useState('');
@@ -26,6 +27,7 @@ const searchProducts = () => {
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [showAdvancedSearch, setShowAdvancedSearch] = useState(false);
+  const [ConditionPreference, setConditionPreference] = useState('');
   useEffect(() => {
     const fetchFilterProduct = async () => {
       try {
@@ -41,11 +43,11 @@ const searchProducts = () => {
   const resetAdvancedFilters = () => {
     setCategoryFilter('');
     setPriceOrderFilter('');
+    setConditionPreference('');
   };
 
   const applyFilters = (product: any) => {
     let filteredProducts = product;
-    console.error("LISTA:",filteredProducts);
     if (categoryFilter.trim() !== '') {
       const normalizedCategoryFilter = categoryFilter.trim().toLowerCase();
         if (filteredProducts.filters && filteredProducts.filters.length > 0) {
@@ -57,28 +59,60 @@ const searchProducts = () => {
               path.name.trim().toLowerCase() === normalizedCategoryFilter
             )
           );
-          // Si coincide con la categoría, devolvemos los resultados
-          if (isCategoryMatch) {
-            return filteredProducts.results;
+          // Si no coincide con la categoría, devolvemos una lista vacia
+         if (!isCategoryMatch) {
+            return [];
           }
         }
       }
-      // Si no encontramos coincidencias, devolvemos una lista vacía
-      return [];
+    }
+    if(ConditionPreference.trim()!== ''){
+      const conditionPreferenceUser= ConditionPreference.trim().toLowerCase();
+      // Función para ordenar según la preferencia del usuario
+      filteredProducts.results.sort((a: any, b: any) => {
+        if (a.condition.trim().toLowerCase() === conditionPreferenceUser && b.condition.trim().toLowerCase() !== conditionPreferenceUser) {
+          return -1; // a antes que b si a coincide con la preferencia del usuario
+        } else if (a.condition.trim().toLowerCase() !== conditionPreferenceUser && b.condition.trim().toLowerCase() === conditionPreferenceUser) {
+          return 1; // b antes que a si b coincide con la preferencia del usuario
+        } else {
+          return 0; // mantener el orden actual si ambos tienen la misma condición
+        }
+        
+      });
     }
     return filteredProducts.results;
   };
   const fetchAllProductsCategory = async (consultPrice: string) => {
     setLoading(true);
     try {
-      console.error("Que:", categoryFilter+consultPrice);
       const data = await GetALLProductsCategory(categoryFilter+consultPrice);
-      setFilteredProducts(data.results);
+      const dataFilter = await HandleFilterCondition(data);
+      setFilteredProducts(dataFilter);
       setLoading(false);
     } catch (error) {
       console.error("Error fetching all products for categories: ", error);
       setLoading(false);
     }
+  }
+  const HandleFilterCondition= (product : any) => {
+    let filteredProducts = product;
+    if(ConditionPreference.trim()!== ''){
+      const conditionPreferenceUser= ConditionPreference.trim().toLowerCase();
+      // Función para ordenar según la preferencia del usuario
+      filteredProducts.results.sort((a: any, b: any) => {
+        if (a.condition === null) return 1;  // a va después
+        if (b.condition === null) return -1; // b va después
+        if (a.condition.trim().toLowerCase() == conditionPreferenceUser && b.condition.trim().toLowerCase() != conditionPreferenceUser) {
+          return -1; // a antes que b si a coincide con la preferencia del usuario
+        } else if (a.condition.trim().toLowerCase() != conditionPreferenceUser && b.condition.trim().toLowerCase() == conditionPreferenceUser) {
+          return 1; // b antes que a si b coincide con la preferencia del usuario
+        } else {
+          return 0; // mantener el orden actual si ambos tienen la misma condición
+        }
+        
+      });
+    }
+    return filteredProducts.results;
   }
   const HandleConsultPrice = () => {
     let consultPrice = '';
@@ -105,10 +139,8 @@ const searchProducts = () => {
     } else {
       setLoading(true);
       try {
-        console.error("aasd:", search+consultPrice);
         const data = await SearchProduct(search+consultPrice);
         const fetchedProducts = data;
-        console.error(data);
         const filtered = applyFilters(fetchedProducts);
         if (filtered.length === 0) {
           setFilteredProducts([]);
@@ -121,13 +153,11 @@ const searchProducts = () => {
       }
     }
   };
-
   const handleKeyDown = (event: {nativeEvent: { key: string; };}) => {
     if (event.nativeEvent.key === 'Enter') {
       handleSearch();
     }
   };
-
   const handleToggleAdvancedSearch = () => {
     setShowAdvancedSearch(!showAdvancedSearch);
     if (showAdvancedSearch) {
@@ -135,6 +165,7 @@ const searchProducts = () => {
     }
   };
   const priceOrderOptions: PriceOrder[] = ['', 'Asc', 'Desc'];
+  const PreferenceCondition: ConditionPreference[] = ['','new', 'used']
   return (
     <View style={isDarkTheme ? styles.containerDark : styles.container}>
       <View style={isDarkTheme ? styles.searchFormDark : styles.searchForm}>
@@ -172,6 +203,17 @@ const searchProducts = () => {
                 onValueChange={(itemValue) => setPriceOrderFilter(itemValue)}
               >
                 {priceOrderOptions.map((option, index) => (
+                  <Picker.Item key={index} label={option === '' ? 'No Filter' : option} value={option} />
+                ))}
+            </Picker>
+
+            <Text style={isDarkTheme ? styles.modalTitleDark : styles.modalTitle}>Filter Condition</Text>
+              <Picker
+                selectedValue={ConditionPreference}
+                style={isDarkTheme ? styles.selectDark : styles.select}
+                onValueChange={(itemValue) => setConditionPreference(itemValue)}
+              >
+                {PreferenceCondition.map((option, index) => (
                   <Picker.Item key={index} label={option === '' ? 'No Filter' : option} value={option} />
                 ))}
             </Picker>
