@@ -186,7 +186,7 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
     zIndex: 9999, 
     alignItems: 'center',
-    backgroundColor: '#fff', // Fondo para que se vea claramente sobre el contenido
+    backgroundColor: '#fff',
   },
   darkMenu: {
     backgroundColor: '#333',

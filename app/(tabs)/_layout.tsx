@@ -5,7 +5,7 @@ import Navbar from '../NavBar';
 
 export default function Layout() {
   return (
-    <ThemeProvider>  {/* Wrap your app with the ThemeProvider */}
+    <ThemeProvider>
       <Navbar />
       <Stack screenOptions={{ headerShown: false }} />
     </ThemeProvider>

@@ -54,9 +54,9 @@ const styles = StyleSheet.create({
     color: '#000',
   },
   calendar: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(7, 1fr)',
-    gap: 16,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
   },
   cell: {
     padding: 16,

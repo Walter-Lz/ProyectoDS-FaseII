@@ -4,6 +4,7 @@ import { signInWithGoogle, getCurrentUser, logOut, db } from '../config/firebase
 import { useRouter } from 'expo-router';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { useTheme } from './ThemeContext';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 interface LoginModalProps {
   visible: boolean;
@@ -25,18 +26,18 @@ const LoginModal: React.FC<LoginModalProps> = ({ visible, onClose }) => {
     }
   }, []);
 
-   const handleSignInWithGoogle = async () => {
+  const handleSignInWithGoogle = async () => {
     try {
       await signInWithGoogle();
       const currentUser = getCurrentUser();
       if (currentUser) {
         setIsLoggedIn(true);
         setUserProfilePicture(currentUser.photoURL);
-  
+
         // Verificar si el documento en la colección Carrito ya existe
         const carritoRef = doc(db, 'Carrito', currentUser.uid);
         const carritoDoc = await getDoc(carritoRef);
-  
+
         if (!carritoDoc.exists()) {
           // Crear un nuevo documento en la colección Carrito si no existe
           await setDoc(carritoRef, {}, { merge: true });
@@ -55,6 +56,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ visible, onClose }) => {
       await logOut();
       setIsLoggedIn(false);
       setUserProfilePicture(null);
+      router.push('/');
     } catch (error) {
       console.error("Error logging out: ", error);
     }
@@ -66,9 +68,12 @@ const LoginModal: React.FC<LoginModalProps> = ({ visible, onClose }) => {
   };
 
   return (
-    <Modal visible={visible} transparent={true} animationType="slide">
+    <Modal visible={visible} transparent={true} animationType="fade">
       <View style={styles.modalContainer}>
         <View style={isDarkTheme ? styles.modalContentDark : styles.modalContent}>
+          <TouchableOpacity style={styles.closeButton} onPress={onClose}>
+            <Icon name="times" size={24} color={isDarkTheme ? "#FFDD00" : "#3483FA"} />
+          </TouchableOpacity>
           <Image
             source={{ uri: userProfilePicture || DEFAULT_PROFILE_PICTURE_URL }}
             style={styles.profilePicture}
@@ -76,14 +81,6 @@ const LoginModal: React.FC<LoginModalProps> = ({ visible, onClose }) => {
           <Text style={isDarkTheme ? styles.modalTitleDark : styles.modalTitle}>
             {isLoggedIn ? 'Welcome!' : 'Please log in'}
           </Text>
-          <TouchableOpacity
-            style={isDarkTheme ? styles.buttonDark : styles.button}
-            onPress={isLoggedIn ? handleLogOut : handleSignInWithGoogle}
-          >
-            <Text style={isDarkTheme ? styles.buttonTextDark : styles.buttonText}>
-              {isLoggedIn ? 'Log Out' : 'Sign In with Google'}
-            </Text>
-          </TouchableOpacity>
           {isLoggedIn && (
             <TouchableOpacity
               style={isDarkTheme ? styles.buttonDark : styles.button}
@@ -96,9 +93,11 @@ const LoginModal: React.FC<LoginModalProps> = ({ visible, onClose }) => {
           )}
           <TouchableOpacity
             style={isDarkTheme ? styles.buttonDark : styles.button}
-            onPress={onClose}
+            onPress={isLoggedIn ? handleLogOut : handleSignInWithGoogle}
           >
-            <Text style={isDarkTheme ? styles.buttonTextDark : styles.buttonText}>Close</Text>
+            <Text style={isDarkTheme ? styles.buttonTextDark : styles.buttonText}>
+              {isLoggedIn ? 'Log Out' : 'Sign In with Google'}
+            </Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -121,6 +120,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderRadius: 10,
     alignItems: 'center',
+    position: 'relative',
   },
   modalContentDark: {
     width: 300,
@@ -128,6 +128,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#333',
     borderRadius: 10,
     alignItems: 'center',
+    position: 'relative',
+  },
+  closeButton: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
   },
   profilePicture: {
     width: 100,

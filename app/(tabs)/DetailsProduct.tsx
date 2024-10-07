@@ -3,9 +3,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, Dimensions, SafeAreaView } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { RootStackParamList } from '../RootParametros';
-import { getCurrentUser } from '../../config/firebaseConfig'; // Asegúrate de tener esta función
+import { getCurrentUser } from '../../config/firebaseConfig';
 import { getFirestore, collection, doc, getDoc, updateDoc, setDoc } from 'firebase/firestore';
-import { db } from '../../config/firebaseConfig'; // Asegúrate de tener configurado Firebase
+import { db } from '../../config/firebaseConfig';
 import { GetItem } from '../../config/ApiRequest';
 import Carousel, { ICarouselInstance } from 'react-native-reanimated-carousel';
 
