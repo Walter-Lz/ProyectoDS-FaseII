@@ -16,16 +16,16 @@ interface filteredProducts {
   };
 }
 const screenwidth = Dimensions.get('window').width;
-
+type PriceOrder= ''| 'Asc' | 'Desc';
 const searchProducts = () => {
   const { isDarkTheme } = useTheme();
   const [search, setSearch] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('');
+  const [priceOrderFilter, setPriceOrderFilter ] = useState('');
   const [loading, setLoading] = useState(false);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [showAdvancedSearch, setShowAdvancedSearch] = useState(false);
-
   useEffect(() => {
     const fetchFilterProduct = async () => {
       try {
@@ -40,6 +40,7 @@ const searchProducts = () => {
 
   const resetAdvancedFilters = () => {
     setCategoryFilter('');
+    setPriceOrderFilter('');
   };
 
   const applyFilters = (product: any) => {
@@ -57,13 +58,14 @@ const searchProducts = () => {
         return false;
       });
     }
+
     return filteredProducts.results;
   };
-
-  const fetchAllProductsCategory = async () => {
+  const fetchAllProductsCategory = async (consultPrice: string) => {
     setLoading(true);
     try {
-      const data = await GetALLProductsCategory(categoryFilter);
+      console.error("Que:", categoryFilter+consultPrice);
+      const data = await GetALLProductsCategory(categoryFilter+consultPrice);
       setFilteredProducts(data.results);
       setLoading(false);
     } catch (error) {
@@ -71,18 +73,37 @@ const searchProducts = () => {
       setLoading(false);
     }
   }
+  const HandleConsultPrice = () => {
+    let consultPrice = '';
+    if (priceOrderFilter) {
+      switch (priceOrderFilter) {
+        case 'Asc':
+          consultPrice = '&sort=price_asc';
+          break;
+        case 'Desc':
+          consultPrice = '&sort=price_desc';
+          break;
+        default:
+          consultPrice = '';
+          break;
+      }
+    }
+  
+    return consultPrice;
+  };
 
   const handleSearch = async () => {
+    const consultPrice = HandleConsultPrice();
     if (search.trim() === '') {
       if (categoryFilter) {
-        fetchAllProductsCategory();
+        fetchAllProductsCategory(consultPrice);
       } else {
         setFilteredProducts([]);
       }
     } else {
       setLoading(true);
       try {
-        const data = await SearchProduct(search);
+        const data = await SearchProduct(search+consultPrice);
         const fetchedProducts = data;
         const filtered = applyFilters(fetchedProducts);
         if (filtered.length === 0) {
@@ -109,7 +130,7 @@ const searchProducts = () => {
       resetAdvancedFilters();
     }
   };
-
+  const priceOrderOptions: PriceOrder[] = ['', 'Asc', 'Desc'];
   return (
     <View style={isDarkTheme ? styles.containerDark : styles.container}>
       <View style={isDarkTheme ? styles.searchFormDark : styles.searchForm}>
@@ -134,11 +155,21 @@ const searchProducts = () => {
               selectedValue={categoryFilter}
               style={isDarkTheme ? styles.selectDark : styles.select}
               onValueChange={(itemValue) => setCategoryFilter(itemValue)}
-            >
+             >
               <Picker.Item label="Select category" value="" />
               {categories.map((category, index) => (
                 <Picker.Item key={index} label={category} value={category} />
               ))}
+            </Picker>
+              <Text style={isDarkTheme ? styles.modalTitleDark : styles.modalTitle}>Filter Price</Text>
+              <Picker
+                selectedValue={priceOrderFilter}
+                style={isDarkTheme ? styles.selectDark : styles.select}
+                onValueChange={(itemValue) => setPriceOrderFilter(itemValue)}
+              >
+                {priceOrderOptions.map((option, index) => (
+                  <Picker.Item key={index} label={option === '' ? 'No Filter' : option} value={option} />
+                ))}
             </Picker>
           </View>
         )}
@@ -280,10 +311,11 @@ const styles = StyleSheet.create({
     color: '#FFDD00',
   },
   filterGroup: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: 'column',
+    alignItems: 'flex-start',
     marginTop: 10,
     width: '100%',
+   
   },
   select: {
     flex: 1,
@@ -292,6 +324,7 @@ const styles = StyleSheet.create({
     borderColor: '#ddd',
     borderRadius: 8,
     backgroundColor: '#fff',
+   
   },
   selectDark: {
     flex: 1,
@@ -301,6 +334,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     backgroundColor: '#666',
     color: '#fff',
+   
   },
   list: {
     justifyContent: 'center',
