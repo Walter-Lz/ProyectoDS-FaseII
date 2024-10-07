@@ -45,20 +45,27 @@ const searchProducts = () => {
 
   const applyFilters = (product: any) => {
     let filteredProducts = product;
+    console.error("LISTA:",filteredProducts);
     if (categoryFilter.trim() !== '') {
-      filteredProducts = filteredProducts.filter((p: any) => {
-        if (p.filters && p.filters.length > 0) {
-          const categoryFilterObj = p.filters.find((filter: any) => filter.id === 'category');
-          if (categoryFilterObj && categoryFilterObj.values.length > 0) {
-            return categoryFilterObj.values.some((value: any) =>
-              value.path_from_root.some((path: any) => path.name === categoryFilter)
-            );
+      const normalizedCategoryFilter = categoryFilter.trim().toLowerCase();
+        if (filteredProducts.filters && filteredProducts.filters.length > 0) {
+          const categoryFilterObj = filteredProducts.filters.find((filter: any) => filter.id === "category");
+        if (categoryFilterObj && categoryFilterObj.values.length > 0) {
+          // Verificamos si algún valor de path_from_root coincide con el filtro de categoría
+          const isCategoryMatch = categoryFilterObj.values.some((value: any) =>
+            value.path_from_root.some((path: any) =>
+              path.name.trim().toLowerCase() === normalizedCategoryFilter
+            )
+          );
+          // Si coincide con la categoría, devolvemos los resultados
+          if (isCategoryMatch) {
+            return filteredProducts.results;
           }
         }
-        return false;
-      });
+      }
+      // Si no encontramos coincidencias, devolvemos una lista vacía
+      return [];
     }
-
     return filteredProducts.results;
   };
   const fetchAllProductsCategory = async (consultPrice: string) => {
@@ -77,21 +84,16 @@ const searchProducts = () => {
     let consultPrice = '';
     if (priceOrderFilter) {
       switch (priceOrderFilter) {
-        case 'Asc':
-          consultPrice = '&sort=price_asc';
+        case 'Asc':consultPrice = '&sort=price_asc';
           break;
-        case 'Desc':
-          consultPrice = '&sort=price_desc';
+        case 'Desc':consultPrice = '&sort=price_desc';
           break;
-        default:
-          consultPrice = '';
+        default:consultPrice = '';
           break;
       }
     }
-  
     return consultPrice;
   };
-
   const handleSearch = async () => {
     const consultPrice = HandleConsultPrice();
     if (search.trim() === '') {
@@ -103,8 +105,10 @@ const searchProducts = () => {
     } else {
       setLoading(true);
       try {
+        console.error("aasd:", search+consultPrice);
         const data = await SearchProduct(search+consultPrice);
         const fetchedProducts = data;
+        console.error(data);
         const filtered = applyFilters(fetchedProducts);
         if (filtered.length === 0) {
           setFilteredProducts([]);
