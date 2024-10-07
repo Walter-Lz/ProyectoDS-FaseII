@@ -1,13 +1,14 @@
 import { RouteProp, useRoute } from '@react-navigation/native';
-import React, { useState, useEffect,useRef } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, Dimensions,SafeAreaView } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, Dimensions, SafeAreaView } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { RootStackParamList } from './RootParametros';
-import { getCurrentUser } from '../config/firebaseConfig'; // Asegúrate de tener esta función
+import { RootStackParamList } from '../RootParametros';
+import { getCurrentUser } from '../../config/firebaseConfig'; // Asegúrate de tener esta función
 import { getFirestore, collection, doc, getDoc, updateDoc, setDoc } from 'firebase/firestore';
-import { db } from '../config/firebaseConfig'; // Asegúrate de tener configurado Firebase
-import {GetItem} from '../config/ApiRequest';
-import Carousel,  { ICarouselInstance } from 'react-native-reanimated-carousel';
+import { db } from '../../config/firebaseConfig'; // Asegúrate de tener configurado Firebase
+import { GetItem } from '../../config/ApiRequest';
+import Carousel, { ICarouselInstance } from 'react-native-reanimated-carousel';
+
 // Define la interfaz para las props
 interface Product {
   id: string;
@@ -19,6 +20,7 @@ interface Product {
   pictures: { secure_url: string }[];
   warranty: string;
 }
+
 type DetailsProductRouteProp = RouteProp<RootStackParamList, 'DetailsProduct'>;
 const { width: viewportWidth } = Dimensions.get('window');
 
@@ -28,13 +30,13 @@ const DetailsProduct: React.FC = () => {
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [isWishlisted, setIsWishlisted] = useState(false);
-  const carouselRef = useRef<ICarouselInstance| null>(null);
+  const carouselRef = useRef<ICarouselInstance | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const data = await GetItem(idProduct); // Llamada a la APIRquest
+        const data = await GetItem(idProduct); // Llamada a la API
         setProduct(data);
         setLoading(false);
       } catch (error) {
@@ -102,7 +104,7 @@ const DetailsProduct: React.FC = () => {
       } else {
         await setDoc(carritoRef, {
           id_products: [idProduct],
-        });
+        },{ merge: true });
         console.log('Producto agregado a la lista de deseados');
         setIsWishlisted(true);
       }
@@ -110,6 +112,7 @@ const DetailsProduct: React.FC = () => {
       console.error('Error adding product to wishlist:', error);
     }
   };
+
   if (loading) {
     return <Text>Loading...</Text>;
   }
@@ -122,60 +125,62 @@ const DetailsProduct: React.FC = () => {
     if (carouselRef.current) {
       carouselRef.current.scrollTo({ index, animated: true }); // Desplazar el carrusel
       setCurrentIndex(index);
-    } 
+    }
   };
   const formatPrice = (price: number) => {
     return `₡${price.toLocaleString('es-CR')}`;
   };
-  return (
-  <SafeAreaView style={styles.safeArea}>
-    <ScrollView style={styles.container}>
-      <TouchableOpacity style={styles.wishlistButton} onPress={handleWishlist}>
-        <Icon name={isWishlisted ? 'heart' : 'heart-o'} size={30} color="#900" />
-      </TouchableOpacity>
-      <View style={styles.imageSection}>
-        <Image 
-        source={{ uri: imageList[currentIndex] }} 
-        style={styles.image} 
-        resizeMode="contain" 
-      />  
-         <Carousel
-          ref={carouselRef}
-          data={imageList}
-          width={viewportWidth}
-          renderItem={({ item }) => (
-            <Image source={{ uri: item }} style={styles.thumbnail} resizeMode="contain" />
-          )}
-          onSnapToItem={(index) => setCurrentIndex(index)}
-          loop= {false}
-          pagingEnabled={true}
-          autoFillData={false}
-        />
-      </View>
-      <ScrollView horizontal style={styles.thumbnailSection}>
-        {imageList.map((image, index) => (
-         <TouchableOpacity key={index} onPress={() => handleThumbnailPress(index)}>
-            <Image source={{ uri: image }} style={styles.thumbnail} />
-          </TouchableOpacity>
-        ))}
-      </ScrollView>
 
-      <View style={styles.titleArea}>
-        <Text style={styles.title}>{product.title}</Text>
-        <Text style={styles.objectiveTitle}>Estado del producto: {product.condition}</Text>
-      </View>
-      <View style={styles.infoSection}>
-        <Text style={styles.objectiveTitle}>Descripción</Text>
-        <Text style={styles.objectiveTitle}>Precio del Producto: {product.price ? formatPrice(product.price) : "No establecido" }</Text>
-        <Text style={styles.objectiveTitle}>Cantidad Disponible: {product.initial_quantity}</Text>
-        <Text style={styles.objectiveTitle}>{product.warranty ? product.warranty : "Sin garantía"}</Text>
-      </View>
-     </ScrollView>
-    </SafeAreaView> 
+  return (
+    <SafeAreaView style={styles.safeArea}>
+      <ScrollView style={styles.container}>
+        <TouchableOpacity style={styles.wishlistButton} onPress={handleWishlist}>
+          <Icon name={isWishlisted ? 'heart' : 'heart-o'} size={30} color="#900" />
+        </TouchableOpacity>
+        <View style={styles.imageSection}>
+          <Image
+            source={{ uri: imageList[currentIndex] }}
+            style={styles.image}
+            resizeMode="contain"
+          />
+          <Carousel
+            ref={carouselRef}
+            data={imageList}
+            width={viewportWidth}
+            renderItem={({ item }) => (
+              <Image source={{ uri: item }} style={styles.thumbnail} resizeMode="contain" />
+            )}
+            onSnapToItem={(index) => setCurrentIndex(index)}
+            loop={false}
+            pagingEnabled={true}
+            autoFillData={false}
+          />
+        </View>
+        <ScrollView horizontal style={styles.thumbnailSection}>
+          {imageList.map((image, index) => (
+            <TouchableOpacity key={index} onPress={() => handleThumbnailPress(index)}>
+              <Image source={{ uri: image }} style={styles.thumbnail} />
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+
+        <View style={styles.titleArea}>
+          <Text style={styles.title}>{product.title}</Text>
+          <Text style={styles.objectiveTitle}>Estado del producto: {product.condition}</Text>
+        </View>
+        <View style={styles.infoSection}>
+          <Text style={styles.objectiveTitle}>Descripción</Text>
+          <Text style={styles.objectiveTitle}>Precio del Producto: {product.price ? formatPrice(product.price) : "No establecido"}</Text>
+          <Text style={styles.objectiveTitle}>Cantidad Disponible: {product.initial_quantity}</Text>
+          <Text style={styles.objectiveTitle}>{product.warranty ? product.warranty : "Sin garantía"}</Text>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
 export default DetailsProduct;
+
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
@@ -186,14 +191,14 @@ const styles = StyleSheet.create({
     maxWidth: 900,
     marginLeft: 'auto',
     marginRight: 'auto',
-    flex:1,
+    flex: 1,
   },
   imageSection: {
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 20,
     width: '100%',
-    height:300,
+    height: 300,
   },
   thumbnailSection: {
     flexDirection: 'row',
@@ -215,7 +220,7 @@ const styles = StyleSheet.create({
   },
   infoSection: {
     textAlign: 'center',
-    paddingHorizontal: 10, 
+    paddingHorizontal: 10,
   },
   titleArea: {
     display: 'flex',

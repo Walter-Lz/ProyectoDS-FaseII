@@ -44,7 +44,7 @@ const Navbar = () => {
           </TouchableOpacity>
           <TouchableOpacity style={styles.profileButtonSmallScreen} onPress={toggleModal}>
             <Image
-              source={{ uri: 'https://via.placeholder.com/150' }}
+              source={{ uri: "https://uxwing.com/wp-content/themes/uxwing/download/peoples-avatars/default-profile-picture-male-icon.png" }}
               style={styles.profileImage}
             />
           </TouchableOpacity>
@@ -82,14 +82,14 @@ const Navbar = () => {
 
           <TouchableOpacity style={styles.profileButton} onPress={toggleModal}>
             <Image
-              source={{ uri: 'https://via.placeholder.com/150' }}
+              source={{ uri: "https://uxwing.com/wp-content/themes/uxwing/download/peoples-avatars/default-profile-picture-male-icon.png" }}
               style={styles.profileImage}
             />
           </TouchableOpacity>
         </View>
       )}
     {menuVisible && screenWidth < 600 && (
-    <View style={styles.menu}>
+    <View style={[styles.menu, isDarkTheme ? styles.darkMenu : styles.lightMenu]}>
           <View style={styles.navItems}>
             <TouchableOpacity onPress={toggleTheme} style={styles.themeButton}>
                 <Ionicons name={isDarkTheme ? "sunny" : "moon"} size={24} color={isDarkTheme ? "#fff" : "#000"} />
@@ -186,6 +186,7 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
     zIndex: 9999, 
     alignItems: 'center',
+    backgroundColor: '#fff', // Fondo para que se vea claramente sobre el contenido
   },
   darkMenu: {
     backgroundColor: '#333',

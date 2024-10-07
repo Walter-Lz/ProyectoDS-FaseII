@@ -52,6 +52,11 @@ const LoginModal: React.FC<LoginModalProps> = ({ visible, onClose }) => {
     }
   };
 
+  const navigateToWishlist = () => {
+    onClose(); // Cerrar el modal antes de navegar
+    router.push('/wishList'); // Navegar al componente Wishlist
+  };
+
   return (
     <Modal visible={visible} transparent={true} animationType="slide">
       <View style={styles.modalContainer}>
@@ -71,6 +76,16 @@ const LoginModal: React.FC<LoginModalProps> = ({ visible, onClose }) => {
               {isLoggedIn ? 'Log Out' : 'Sign In with Google'}
             </Text>
           </TouchableOpacity>
+          {isLoggedIn && (
+            <TouchableOpacity
+              style={isDarkTheme ? styles.buttonDark : styles.button}
+              onPress={navigateToWishlist}
+            >
+              <Text style={isDarkTheme ? styles.buttonTextDark : styles.buttonText}>
+                Lista de Deseados
+              </Text>
+            </TouchableOpacity>
+          )}
           <TouchableOpacity
             style={isDarkTheme ? styles.buttonDark : styles.button}
             onPress={onClose}
