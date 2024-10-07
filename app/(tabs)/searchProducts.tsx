@@ -70,6 +70,8 @@ const searchProducts = () => {
       const conditionPreferenceUser= ConditionPreference.trim().toLowerCase();
       // Función para ordenar según la preferencia del usuario
       filteredProducts.results.sort((a: any, b: any) => {
+        if (a.condition === null) return 1;  // a va después
+        if (b.condition === null) return -1; // b va después
         if (a.condition.trim().toLowerCase() === conditionPreferenceUser && b.condition.trim().toLowerCase() !== conditionPreferenceUser) {
           return -1; // a antes que b si a coincide con la preferencia del usuario
         } else if (a.condition.trim().toLowerCase() !== conditionPreferenceUser && b.condition.trim().toLowerCase() === conditionPreferenceUser) {
