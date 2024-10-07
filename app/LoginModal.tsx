@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Modal, Image } from 'react-native';
 import { signInWithGoogle, getCurrentUser, logOut, db } from '../config/firebaseConfig';
 import { useRouter } from 'expo-router';
-import { doc, setDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { useTheme } from './ThemeContext';
 
 interface LoginModalProps {
@@ -25,17 +25,25 @@ const LoginModal: React.FC<LoginModalProps> = ({ visible, onClose }) => {
     }
   }, []);
 
-  const handleSignInWithGoogle = async () => {
+   const handleSignInWithGoogle = async () => {
     try {
       await signInWithGoogle();
       const currentUser = getCurrentUser();
       if (currentUser) {
         setIsLoggedIn(true);
         setUserProfilePicture(currentUser.photoURL);
-
-        // Crear un nuevo documento en la colección Carrito
+  
+        // Verificar si el documento en la colección Carrito ya existe
         const carritoRef = doc(db, 'Carrito', currentUser.uid);
-        await setDoc(carritoRef, {});
+        const carritoDoc = await getDoc(carritoRef);
+  
+        if (!carritoDoc.exists()) {
+          // Crear un nuevo documento en la colección Carrito si no existe
+          await setDoc(carritoRef, {}, { merge: true });
+          console.log('Documento de carrito creado');
+        } else {
+          console.log('Documento de carrito ya existe');
+        }
       }
     } catch (error) {
       console.error("Error signing in with Google: ", error);

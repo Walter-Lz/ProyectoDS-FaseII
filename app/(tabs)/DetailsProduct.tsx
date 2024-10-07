@@ -77,7 +77,6 @@ const DetailsProduct: React.FC = () => {
 
     checkIfWishlisted();
   }, [idProduct]);
-
   const handleWishlist = async () => {
     try {
       const user = getCurrentUser();
@@ -104,7 +103,7 @@ const DetailsProduct: React.FC = () => {
       } else {
         await setDoc(carritoRef, {
           id_products: [idProduct],
-        },{ merge: true });
+        }, { merge: true });
         console.log('Producto agregado a la lista de deseados');
         setIsWishlisted(true);
       }
@@ -112,7 +111,6 @@ const DetailsProduct: React.FC = () => {
       console.error('Error adding product to wishlist:', error);
     }
   };
-
   if (loading) {
     return <Text>Loading...</Text>;
   }
