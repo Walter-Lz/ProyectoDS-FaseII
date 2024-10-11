@@ -5,6 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import LoginModal from './LoginModal';
 import { useTheme } from './ThemeContext';
 
+
 const Navbar = () => {
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
@@ -33,6 +34,9 @@ const Navbar = () => {
   const toggleMenu = () => {
     setMenuVisible(!menuVisible); 
   };
+  const changeLanguage = (language: string) => {
+    console.log('Language changed to', language);
+  }
 
   return (
     <View style={[styles.navbar, isDarkTheme ? styles.darkNavbar : styles.lightNavbar]}>
@@ -75,10 +79,17 @@ const Navbar = () => {
             ))}
           </View>
           
-
           <TouchableOpacity onPress={toggleTheme} style={styles.themeButton}>
-           <Ionicons name={isDarkTheme ? "sunny" : "moon"} size={24} color={isDarkTheme ? "#fff" : "#000"} />
-         </TouchableOpacity>
+            <Ionicons name={isDarkTheme ? "sunny" : "moon"} size={24} color={isDarkTheme ? "#fff" : "#000"} />
+          </TouchableOpacity>
+
+          {/* Botones para cambiar de idioma */}
+          <TouchableOpacity onPress={() => changeLanguage('en')} style={styles.languageButton}>
+            <Text style={isDarkTheme ? styles.darkText : styles.lightText}>EN</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => changeLanguage('es')} style={styles.languageButton}>
+            <Text style={isDarkTheme ? styles.darkText : styles.lightText}>ES</Text>
+          </TouchableOpacity>
 
           <TouchableOpacity style={styles.profileButton} onPress={toggleModal}>
             <Image
@@ -88,36 +99,45 @@ const Navbar = () => {
           </TouchableOpacity>
         </View>
       )}
-    {menuVisible && screenWidth < 600 && (
-    <View style={[styles.menu, isDarkTheme ? styles.darkMenu : styles.lightMenu]}>
+      {menuVisible && screenWidth < 600 && (
+        <View style={[styles.menu, isDarkTheme ? styles.darkMenu : styles.lightMenu]}>
           <View style={styles.navItems}>
             <TouchableOpacity onPress={toggleTheme} style={styles.themeButton}>
-                <Ionicons name={isDarkTheme ? "sunny" : "moon"} size={24} color={isDarkTheme ? "#fff" : "#000"} />
+              <Ionicons name={isDarkTheme ? "sunny" : "moon"} size={24} color={isDarkTheme ? "#fff" : "#000"} />
             </TouchableOpacity>
           </View>
-      {[
-        { label: 'Inicio', route: '/' },
-        { label: 'Búsqueda', route: '/searchProducts' },
-      ].map((item, index) => (
-        <TouchableOpacity
-          key={index}
-          onPressIn={() => handleMouseEnter(item.label)}
-          onPressOut={handleMouseLeave}
-          onPress={() => navigateTo(item.route)}
-        >
-          <Text
-            style={[
-              styles.navItem,
-              hoveredItem === item.label && styles.navItemHovered,
-              isDarkTheme ? styles.darkText : styles.lightText,
-            ]}
-          >
-            {item.label}
-          </Text>
-        </TouchableOpacity>
-      ))}
-  </View>
-)}
+          {[
+            { label: 'Inicio', route: '/' },
+            { label: 'Búsqueda', route: '/searchProducts' },
+          ].map((item, index) => (
+            <TouchableOpacity
+              key={index}
+              onPressIn={() => handleMouseEnter(item.label)}
+              onPressOut={handleMouseLeave}
+              onPress={() => navigateTo(item.route)}
+            >
+              <Text
+                style={[
+                  styles.navItem,
+                  hoveredItem === item.label && styles.navItemHovered,
+                  isDarkTheme ? styles.darkText : styles.lightText,
+                ]}
+              >
+                {item.label}
+              </Text>
+            </TouchableOpacity>
+          ))}
+          {/* Botones para cambiar de idioma */}
+          <View style={styles.languageButtonsMobile}>
+            <TouchableOpacity onPress={() => changeLanguage('en')} style={styles.languageButton}>
+              <Text style={isDarkTheme ? styles.darkText : styles.lightText}>EN</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => changeLanguage('es')} style={styles.languageButton}>
+              <Text style={isDarkTheme ? styles.darkText : styles.lightText}>ES</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      )}
       <LoginModal visible={modalVisible} onClose={toggleModal} />
     </View>
   );
@@ -196,6 +216,18 @@ const styles = StyleSheet.create({
   },
   themeButton: {
     marginRight: 10,
+  },
+  languageButtons: {
+    flexDirection: 'row',
+    marginLeft: 10,
+  },
+  languageButtonsMobile: {
+    flexDirection: 'column',
+    alignItems: 'center',
+  },
+  languageButton: {
+    marginHorizontal: 5,
+    marginVertical: 2,
   },
 });
 
