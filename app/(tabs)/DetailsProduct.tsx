@@ -165,13 +165,11 @@ const DetailsProduct: React.FC = () => {
         <View style={styles.detailsSection}>
           <View style={isDarkTheme ? styles.titleAreaDark :styles.titleArea}>
             <Text style={styles.title}>{product.title}</Text>
-            <Text style={isDarkTheme ?styles.objectiveTitleDark :styles.objectiveTitle}>Estado del producto: {product.condition}</Text>
-          </View>
-          <View style={isDarkTheme ? styles.infoSectionDark :styles.infoSection}>
-            <Text style={isDarkTheme ?styles.objectiveTitleDark :styles.objectiveTitle}>Descripción</Text>
-            <Text style={isDarkTheme ?styles.objectiveTitleDark :styles.objectiveTitle}>Precio del Producto: {product.price ? formatPrice(product.price) : "No establecido"}</Text>
-            <Text style={isDarkTheme ?styles.objectiveTitleDark :styles.objectiveTitle}>Cantidad Disponible: {product.initial_quantity}</Text>
-            <Text style={isDarkTheme ?styles.objectiveTitleDark :styles.objectiveTitle}>{product.warranty ? product.warranty : "Sin garantía"}</Text>
+            <Text style={styles.objectiveTitle}>Estado del producto: {product.condition}</Text>
+            <Text style={styles.objectiveTitle}>Descripción</Text>
+            <Text style={styles.objectiveTitle}>Precio del Producto: {product.price ? formatPrice(product.price) : "No establecido"}</Text>
+            <Text style={styles.objectiveTitle}>Cantidad Disponible: {product.initial_quantity}</Text>
+            <Text style={styles.objectiveTitle}>{product.warranty ? product.warranty : "Sin garantía"}</Text>
           </View>
         </View>
       </ScrollView>
@@ -239,16 +237,6 @@ const styles = StyleSheet.create({
     minHeight: '60%',
     flex: 1,
   },
-  infoSection: {
-    textAlign: 'center',
-    backgroundColor: '#f5f5f5',
-    paddingHorizontal: 10,
-  },
-  infoSectionDark: {
-    textAlign: 'center',
-    backgroundColor: '#333',
-    paddingHorizontal: 10,
-  },
   titleArea: {
     display: 'flex',
     flexDirection: 'column',
@@ -271,13 +259,6 @@ const styles = StyleSheet.create({
   },
   objectiveTitle: {
     fontSize: 21,
-    backgroundColor: '#fff',
-    marginBottom: 10,
-    textAlign: 'center',
-  },
-  objectiveTitleDark: {
-    fontSize: 21,
-    backgroundColor: '#FFDD00',
     marginBottom: 10,
     textAlign: 'center',
   },
