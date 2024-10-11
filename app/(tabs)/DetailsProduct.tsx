@@ -8,7 +8,7 @@ import { getFirestore, collection, doc, getDoc, updateDoc, setDoc } from 'fireba
 import { db } from '../../config/firebaseConfig';
 import { GetItem } from '../../config/ApiRequest';
 import Carousel, { ICarouselInstance } from 'react-native-reanimated-carousel';
-
+import { useTheme } from '../ThemeContext';
 // Define la interfaz para las props
 interface Product {
   id: string;
@@ -25,6 +25,7 @@ type DetailsProductRouteProp = RouteProp<RootStackParamList, 'DetailsProduct'>;
 const { width: viewportWidth } = Dimensions.get('window');
 
 const DetailsProduct: React.FC = () => {
+  const { isDarkTheme } = useTheme();
   const route = useRoute<DetailsProductRouteProp>();
   const { idProduct } = route.params;
   const [product, setProduct] = useState<Product | null>(null);
@@ -53,9 +54,9 @@ const DetailsProduct: React.FC = () => {
       try {
         const user = getCurrentUser();
         if (!user) {
-          console.error('No user is logged in');
-          return;
-        }
+          return ('No user is logged in');
+        //  return;
+        }else{
         const carritoRef = doc(db, 'Carrito', user.uid);
         const carritoDoc = await getDoc(carritoRef);
 
@@ -70,7 +71,7 @@ const DetailsProduct: React.FC = () => {
         } else {
           setIsWishlisted(false);
         }
-      } catch (error) {
+      }} catch (error) {
         console.error('Error checking wishlist status:', error);
       }
     };
@@ -81,9 +82,9 @@ const DetailsProduct: React.FC = () => {
     try {
       const user = getCurrentUser();
       if (!user) {
-        console.error('No user is logged in');
-        return;
-      }
+        return ('No user is logged in');
+     //   return;
+      }else{
       const carritoRef = doc(db, 'Carrito', user.uid);
       const carritoDoc = await getDoc(carritoRef);
 
@@ -107,7 +108,7 @@ const DetailsProduct: React.FC = () => {
         console.log('Producto agregado a la lista de deseados');
         setIsWishlisted(true);
       }
-    } catch (error) {
+    }} catch (error) {
       console.error('Error adding product to wishlist:', error);
     }
   };
@@ -130,10 +131,10 @@ const DetailsProduct: React.FC = () => {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <ScrollView style={styles.container}>
-        <TouchableOpacity style={styles.wishlistButton} onPress={handleWishlist}>
-          <Icon name={isWishlisted ? 'heart' : 'heart-o'} size={30} color="#900" />
+    <SafeAreaView style={isDarkTheme ? styles.safeAreaDark :styles.safeArea}>
+      <ScrollView style={isDarkTheme ? styles.containerDark:styles.container}>
+        <TouchableOpacity style={isDarkTheme ? styles.wishlistButtonDark :styles.wishlistButton} onPress={handleWishlist}>
+          <Icon name={isWishlisted ? 'heart' : 'heart-o'} size={30} color={isDarkTheme ? '#FFDD00':'#900' } />
         </TouchableOpacity>
         <View style={styles.imageSection}>
           <Image
@@ -161,16 +162,17 @@ const DetailsProduct: React.FC = () => {
             </TouchableOpacity>
           ))}
         </ScrollView>
-
-        <View style={styles.titleArea}>
-          <Text style={styles.title}>{product.title}</Text>
-          <Text style={styles.objectiveTitle}>Estado del producto: {product.condition}</Text>
-        </View>
-        <View style={styles.infoSection}>
-          <Text style={styles.objectiveTitle}>Descripción</Text>
-          <Text style={styles.objectiveTitle}>Precio del Producto: {product.price ? formatPrice(product.price) : "No establecido"}</Text>
-          <Text style={styles.objectiveTitle}>Cantidad Disponible: {product.initial_quantity}</Text>
-          <Text style={styles.objectiveTitle}>{product.warranty ? product.warranty : "Sin garantía"}</Text>
+        <View style={styles.detailsSection}>
+          <View style={isDarkTheme ? styles.titleAreaDark :styles.titleArea}>
+            <Text style={styles.title}>{product.title}</Text>
+            <Text style={isDarkTheme ?styles.objectiveTitleDark :styles.objectiveTitle}>Estado del producto: {product.condition}</Text>
+          </View>
+          <View style={isDarkTheme ? styles.infoSectionDark :styles.infoSection}>
+            <Text style={isDarkTheme ?styles.objectiveTitleDark :styles.objectiveTitle}>Descripción</Text>
+            <Text style={isDarkTheme ?styles.objectiveTitleDark :styles.objectiveTitle}>Precio del Producto: {product.price ? formatPrice(product.price) : "No establecido"}</Text>
+            <Text style={isDarkTheme ?styles.objectiveTitleDark :styles.objectiveTitle}>Cantidad Disponible: {product.initial_quantity}</Text>
+            <Text style={isDarkTheme ?styles.objectiveTitleDark :styles.objectiveTitle}>{product.warranty ? product.warranty : "Sin garantía"}</Text>
+          </View>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -184,17 +186,34 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
   },
+  safeAreaDark: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
   container: {
     padding: 20,
     maxWidth: 900,
+    backgroundColor: '#f5f5f5',
     marginLeft: 'auto',
     marginRight: 'auto',
     flex: 1,
   },
+  containerDark: {
+    padding: 20,
+    maxWidth: 900,
+    backgroundColor: '#333',
+    marginLeft: 'auto',
+    marginRight: 'auto',
+    flex: 1,
+  },
+
   imageSection: {
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 20,
+    marginTop:-5,
+    marginBottom: 10,
+    marginRight: -30,
+    marginLeft:0,
     width: '100%',
     height: 300,
   },
@@ -216,13 +235,31 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.8,
   },
+  detailsSection: {
+    minHeight: '60%',
+    flex: 1,
+  },
   infoSection: {
     textAlign: 'center',
+    backgroundColor: '#f5f5f5',
+    paddingHorizontal: 10,
+  },
+  infoSectionDark: {
+    textAlign: 'center',
+    backgroundColor: '#333',
     paddingHorizontal: 10,
   },
   titleArea: {
     display: 'flex',
     flexDirection: 'column',
+    backgroundColor: '#f5f5f5',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  titleAreaDark: {
+    display: 'flex',
+    flexDirection: 'column',
+    backgroundColor: '#FFDD00',
     alignItems: 'center',
     marginBottom: 20,
   },
@@ -234,14 +271,29 @@ const styles = StyleSheet.create({
   },
   objectiveTitle: {
     fontSize: 21,
-    color: '#000000',
+    backgroundColor: '#fff',
+    marginBottom: 10,
+    textAlign: 'center',
+  },
+  objectiveTitleDark: {
+    fontSize: 21,
+    backgroundColor: '#FFDD00',
     marginBottom: 10,
     textAlign: 'center',
   },
   wishlistButton: {
+    color: '#3483FA',
     position: 'absolute',
     top: 20,
     right: 20,
     zIndex: 1,
   },
+  wishlistButtonDark: {
+    color: '#FFDD00',
+    position: 'absolute',
+    top: 20,
+    right: 20,
+    zIndex: 1,
+  },
+
 });
