@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
-import { FontAwesome } from '@expo/vector-icons'; // Assuming you are using Expo
-import { useTheme } from './ThemeContext';
+import { FontAwesome } from '@expo/vector-icons';
+import { useTheme } from '../config/ThemeContext';
 
 const Loading: React.FC = () => {
   const { isDarkTheme } = useTheme();

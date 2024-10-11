@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet, Modal, Image } from 'react-na
 import { signInWithGoogle, getCurrentUser, logOut, db } from '../config/firebaseConfig';
 import { useRouter } from 'expo-router';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
-import { useTheme } from './ThemeContext';
+import { useTheme } from '../config/ThemeContext';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 interface LoginModalProps {
@@ -34,12 +34,10 @@ const LoginModal: React.FC<LoginModalProps> = ({ visible, onClose }) => {
         setIsLoggedIn(true);
         setUserProfilePicture(currentUser.photoURL);
 
-        // Verificar si el documento en la colección Carrito ya existe
         const carritoRef = doc(db, 'Carrito', currentUser.uid);
         const carritoDoc = await getDoc(carritoRef);
 
         if (!carritoDoc.exists()) {
-          // Crear un nuevo documento en la colección Carrito si no existe
           await setDoc(carritoRef, {}, { merge: true });
           console.log('Documento de carrito creado');
         } else {
@@ -63,8 +61,8 @@ const LoginModal: React.FC<LoginModalProps> = ({ visible, onClose }) => {
   };
 
   const navigateToWishlist = () => {
-    onClose(); // Cerrar el modal antes de navegar
-    router.push('/wishList'); // Navegar al componente Wishlist
+    onClose(); 
+    router.push('/wishList'); 
   };
 
   return (

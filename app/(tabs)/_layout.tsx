@@ -1,8 +1,8 @@
 import React from 'react';
-import { ThemeProvider } from '../ThemeContext'; 
+import { ThemeProvider } from '../../config/ThemeContext'; 
 import { Stack } from 'expo-router';
-import Navbar from '../NavBar';
-import Footer from '../Footer'; 
+import Navbar from '../../components/NavBar';
+import Footer from '../../components/Footer'; 
 
 export default function Layout() {
   return (

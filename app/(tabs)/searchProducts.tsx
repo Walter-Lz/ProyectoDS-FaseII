@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, Dimensions, TextInput, TouchableOpacity } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
-import { useTheme } from '../ThemeContext';
-import CardProduct from '../CardProduct';
-import Loading from '../Loading';
+import { useTheme } from '../../config/ThemeContext';
+import CardProduct from '../../components/CardProduct';
+import Loading from '../../components/Loading';
 import { GetCategories, SearchProduct, GetALLProductsCategory } from '../../config/ApiRequest';
 
 interface Product {
@@ -269,10 +269,10 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   mainTitleLight: {
-    color: '#3483FA', // Azul para modo claro
+    color: '#3483FA', 
   },
   mainTitleDark: {
-    color: '#FFDD00', // Amarillo para modo oscuro
+    color: '#FFDD00',
   },
   searchForm: {
     flexDirection: 'row',
@@ -441,13 +441,13 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 150,
     borderBottomWidth: 2,
-    borderBottomColor: '#3483FA', // Azul para modo claro
+    borderBottomColor: '#3483FA', 
   },
   imageContainerDark: {
     width: '100%',
     height: 150,
     borderBottomWidth: 2,
-    borderBottomColor: '#FFDD00', // Amarillo para modo oscuro
+    borderBottomColor: '#FFDD00',
   },
   image: {
     width: '100%',

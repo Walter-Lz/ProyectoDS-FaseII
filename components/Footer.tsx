@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, Linking, TouchableOpacity, useWindowDimensions } from 'react-native';
-import { useTheme } from './ThemeContext';
-import { FontAwesome } from '@expo/vector-icons'; // Assuming you are using Expo
+import { useTheme } from '../config/ThemeContext';
+import { FontAwesome } from '@expo/vector-icons'; 
 
 const developers = [
   {

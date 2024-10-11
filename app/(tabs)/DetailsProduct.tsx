@@ -8,8 +8,8 @@ import { doc, getDoc, updateDoc, setDoc } from 'firebase/firestore';
 import { db } from '../../config/firebaseConfig';
 import { GetItem } from '../../config/ApiRequest';
 import Carousel, { ICarouselInstance } from 'react-native-reanimated-carousel';
-import { useTheme } from '../ThemeContext';
-import Loading from '../Loading'; 
+import { useTheme } from '../../config/ThemeContext';
+import Loading from '../../components/Loading'; 
 
 interface Product {
   id: string;
@@ -95,7 +95,6 @@ const DetailsProduct: React.FC = () => {
           const idProducts = carritoData.id_products || [];
 
           if (idProducts.includes(idProduct)) {
-            // Eliminar el producto de la lista de deseos
             const updatedIdProducts = idProducts.filter((id: string) => id !== idProduct);
             await updateDoc(carritoRef, {
               id_products: updatedIdProducts,
@@ -103,7 +102,6 @@ const DetailsProduct: React.FC = () => {
             console.log('Producto eliminado de la lista de deseados');
             setIsWishlisted(false);
           } else {
-            // Agregar el producto a la lista de deseos
             await updateDoc(carritoRef, {
               id_products: [...idProducts, idProduct],
             });

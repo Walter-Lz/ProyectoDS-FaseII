@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
-import { RootStackParamList } from './RootParametros';
+import { RootStackParamList } from '../app/RootParametros';
 import { View, Text, StyleSheet, TouchableOpacity, Image, Dimensions } from 'react-native';
-import { useTheme } from './ThemeContext';
+import { useTheme } from '../config/ThemeContext';
 
-// Define la interfaz para las props
 interface CardProductProps {
   id: string;
   image: string;
@@ -75,13 +74,13 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 150,
     borderBottomWidth: 2,
-    borderBottomColor: '#3483FA', // Azul para modo claro
+    borderBottomColor: '#3483FA',
   },
   imageContainerDark: {
     width: '100%',
     height: 150,
     borderBottomWidth: 2,
-    borderBottomColor: '#FFDD00', // Amarillo para modo oscuro
+    borderBottomColor: '#FFDD00',
   },
   image: {
     width: '100%',
