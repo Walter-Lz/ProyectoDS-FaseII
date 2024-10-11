@@ -37,7 +37,7 @@ const DetailsProduct: React.FC = () => {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const data = await GetItem(idProduct);
+        const data = await GetItem(idProduct); // Llamada a la API
         setProduct(data);
         setLoading(false);
       } catch (error) {
@@ -78,7 +78,6 @@ const DetailsProduct: React.FC = () => {
 
     checkIfWishlisted();
   }, [idProduct]);
-
   const handleWishlist = async () => {
     try {
       const user = getCurrentUser();
@@ -94,15 +93,8 @@ const DetailsProduct: React.FC = () => {
         const idProducts = carritoData.id_products || [];
 
         if (idProducts.includes(idProduct)) {
-          // Eliminar el producto de la lista de deseados
-          const updatedProducts = idProducts.filter((productId: string) => productId !== idProduct);
-          await updateDoc(carritoRef, {
-            id_products: updatedProducts,
-          });
-          console.log('Producto eliminado de la lista de deseados');
-          setIsWishlisted(false);
+          console.log('El producto ya está registrado en la lista de deseados');
         } else {
-          // Agregar el producto a la lista de deseados
           await updateDoc(carritoRef, {
             id_products: [...idProducts, idProduct],
           });
@@ -110,7 +102,6 @@ const DetailsProduct: React.FC = () => {
           setIsWishlisted(true);
         }
       } else {
-        // Crear un nuevo documento de carrito y agregar el producto a la lista de deseados
         await setDoc(carritoRef, {
           id_products: [idProduct],
         }, { merge: true });
@@ -121,7 +112,6 @@ const DetailsProduct: React.FC = () => {
       console.error('Error adding product to wishlist:', error);
     }
   };
-
   if (loading) {
     return <Text>Loading...</Text>;
   }
