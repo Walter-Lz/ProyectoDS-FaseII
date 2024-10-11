@@ -3,9 +3,9 @@ import { View, Text, ScrollView, StyleSheet, Dimensions } from 'react-native';
 import { getCurrentUser } from '../../config/firebaseConfig';
 import { getFirestore, doc, getDoc } from 'firebase/firestore';
 import { db } from '../../config/firebaseConfig';
-import CardProduct from '../CardProduct';
-import Loading from '../Loading';
-import { useTheme } from '../ThemeContext';
+import CardProduct from '../../components/CardProduct';
+import Loading from '../../components/Loading';
+import { useTheme } from '../../config/ThemeContext';
 
 interface Product {
   id: string;
