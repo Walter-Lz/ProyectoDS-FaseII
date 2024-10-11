@@ -186,12 +186,12 @@ const styles = StyleSheet.create({
   },
   safeAreaDark: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#333',
   },
   container: {
     padding: 20,
     maxWidth: 900,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#fff',
     marginLeft: 'auto',
     marginRight: 'auto',
     flex: 1,
@@ -214,6 +214,7 @@ const styles = StyleSheet.create({
     marginLeft:0,
     width: '100%',
     height: 300,
+    
   },
   thumbnailSection: {
     flexDirection: 'row',
@@ -240,7 +241,7 @@ const styles = StyleSheet.create({
   titleArea: {
     display: 'flex',
     flexDirection: 'column',
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#fff',
     alignItems: 'center',
     marginBottom: 20,
   },
