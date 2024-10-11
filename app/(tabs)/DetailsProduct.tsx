@@ -164,12 +164,12 @@ const DetailsProduct: React.FC = () => {
         </ScrollView>
         <View style={styles.detailsSection}>
           <View style={isDarkTheme ? styles.titleAreaDark :styles.titleArea}>
-            <Text style={styles.title}>{product.title}</Text>
-            <Text style={styles.objectiveTitle}>Estado del producto: {product.condition}</Text>
-            <Text style={styles.objectiveTitle}>Descripción</Text>
-            <Text style={styles.objectiveTitle}>Precio del Producto: {product.price ? formatPrice(product.price) : "No establecido"}</Text>
-            <Text style={styles.objectiveTitle}>Cantidad Disponible: {product.initial_quantity}</Text>
-            <Text style={styles.objectiveTitle}>{product.warranty ? product.warranty : "Sin garantía"}</Text>
+            <Text style={isDarkTheme ? styles.titleDark :styles.title}>{product.title}</Text>
+            <Text style={isDarkTheme ?styles.objectiveTitleDark :styles.objectiveTitle}>Estado del producto: {product.condition}</Text>
+            <Text style={isDarkTheme ?styles.objectiveTitleDark :styles.objectiveTitle}>Descripción</Text>
+            <Text style={isDarkTheme ?styles.objectiveTitleDark :styles.objectiveTitle}>Precio del Producto: {product.price ? formatPrice(product.price) : "No establecido"}</Text>
+            <Text style={isDarkTheme ?styles.objectiveTitleDark :styles.objectiveTitle}>Cantidad Disponible: {product.initial_quantity}</Text>
+            <Text style={isDarkTheme ?styles.objectiveTitleDark :styles.objectiveTitle}>{product.warranty ? product.warranty : "Sin garantía"}</Text>
           </View>
         </View>
       </ScrollView>
@@ -248,19 +248,32 @@ const styles = StyleSheet.create({
   titleAreaDark: {
     display: 'flex',
     flexDirection: 'column',
-    backgroundColor: '#FFDD00',
+    backgroundColor: '#444',
     alignItems: 'center',
     marginBottom: 20,
   },
   title: {
     fontSize: 24,
-    color: '#000000',
+    color: '#3483FA',
+    marginBottom: 10,
+    textAlign: 'center',
+  },
+  titleDark: {
+    fontSize: 24,
+    color: '#FFDD00',
     marginBottom: 10,
     textAlign: 'center',
   },
   objectiveTitle: {
     fontSize: 21,
     marginBottom: 10,
+    color: '#3483FA',
+    textAlign: 'center',
+  },
+  objectiveTitleDark: {
+    fontSize: 21,
+    marginBottom: 10,
+    color: '#FFDD00',
     textAlign: 'center',
   },
   wishlistButton: {
