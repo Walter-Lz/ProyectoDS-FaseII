@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, StyleSheet, Dimensions } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, Dimensions } from 'react-native';
 import { getCurrentUser } from '../../config/firebaseConfig';
 import { getFirestore, doc, getDoc } from 'firebase/firestore';
 import { db } from '../../config/firebaseConfig';
 import CardProduct from '../CardProduct';
+import Loading from '../Loading';
 import { useTheme } from '../ThemeContext';
 
 interface Product {
@@ -19,22 +20,6 @@ const Wishlist: React.FC = () => {
   const { isDarkTheme } = useTheme();
   const [wishlist, setWishlist] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
-  const [screenWidth, setScreenWidth] = useState(Dimensions.get('window').width);
-
-  useEffect(() => {
-    const handleResize = () => {
-      setScreenWidth(Dimensions.get('window').width);
-    };
-
-    const subscription = Dimensions.addEventListener('change', handleResize);
-
-    return () => {
-      subscription?.remove();
-    };
-  }, []);
-
-  const numColumns = screenWidth > 800 ? 4 : screenWidth > 600 ? 3 : screenWidth > 400 ? 2 : 1;
-  const cardWidth = screenWidth / numColumns - 20;  // 20 for padding and margins
 
   useEffect(() => {
     const fetchWishlist = async () => {
@@ -81,7 +66,7 @@ const Wishlist: React.FC = () => {
   }, []);
 
   if (loading) {
-    return <Text style={isDarkTheme ? styles.loadingTextDark : styles.loadingText}>Loading...</Text>;
+    return <Loading />;
   }
 
   if (wishlist.length === 0) {
@@ -89,49 +74,47 @@ const Wishlist: React.FC = () => {
   }
 
   return (
-    <View style={[styles.container, isDarkTheme ? styles.containerDark : styles.containerLight]}>
-      <FlatList
-        data={wishlist}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <View style={[styles.cardContainer, { width: cardWidth }]}>
-            <CardProduct
-              id={item.id}
-              image={item.thumbnail.replace('http://', 'https://')}
-              title={item.title}
-              price={item.price}
-              condition={item.condition}
-            />
-          </View>
-        )}
-        contentContainerStyle={styles.listContent}
-        numColumns={numColumns}
-        key={numColumns}
-      />
-    </View>
+    <ScrollView contentContainerStyle={[styles.container, isDarkTheme ? styles.darkContainer : styles.lightContainer]}>
+      <Text style={[styles.mainTitle, isDarkTheme ? styles.mainTitleDark : styles.mainTitleLight]}>Mi Lista de Deseos</Text>
+      <View style={styles.productList}>
+        {wishlist.map((product) => (
+          <CardProduct
+            key={product.id}
+            id={product.id}
+            image={product.thumbnail.replace('http://', 'https://')}
+            title={product.title}
+            price={product.price}
+            condition={product.condition}
+          />
+        ))}
+      </View>
+    </ScrollView>
   );
 };
 
+const screenWidth = Dimensions.get('window').width;
+
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    padding: 10,
+    flexGrow: 1,
+    padding: 16,
+    alignItems: 'center',
   },
-  containerLight: {
+  darkContainer: {
+    backgroundColor: '#000',
+  },
+  lightContainer: {
     backgroundColor: '#fff',
   },
-  containerDark: {
-    backgroundColor: '#333',
+  mainTitle: {
+    fontSize: 32,
+    fontWeight: 'bold',
+    marginBottom: 8,
   },
-  loadingText: {
-    flex: 1,
-    textAlign: 'center',
-    marginTop: 20,
+  mainTitleLight: {
+    color: '#3483FA',
   },
-  loadingTextDark: {
-    flex: 1,
-    textAlign: 'center',
-    marginTop: 20,
+  mainTitleDark: {
     color: '#FFDD00',
   },
   emptyText: {
@@ -145,12 +128,10 @@ const styles = StyleSheet.create({
     marginTop: 20,
     color: '#FFDD00',
   },
-  listContent: {
+  productList: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
     justifyContent: 'center',
-    paddingHorizontal: 10,
-  },
-  cardContainer: {
-    margin: 10,
   },
 });
 

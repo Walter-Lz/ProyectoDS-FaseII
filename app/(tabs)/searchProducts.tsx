@@ -1,33 +1,35 @@
-import { useEffect, useState } from "react";
-import {TouchableOpacity, Text, StyleSheet, View, FlatList, Dimensions, TextInput } from 'react-native';
-import CardProduct from '../CardProduct';
-import { useTheme } from '../ThemeContext';
-import { GetCategories, SearchProduct, GetALLProductsCategory} from '../../config/ApiRequest';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, Dimensions, TextInput, TouchableOpacity } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
-interface filteredProducts {
+import { useTheme } from '../ThemeContext';
+import CardProduct from '../CardProduct';
+import Loading from '../Loading';
+import { GetCategories, SearchProduct, GetALLProductsCategory } from '../../config/ApiRequest';
+
+interface Product {
   id: string;
   title: string;
-  condition: string;
-  price: number;
-  available_quantity: number;
   thumbnail: string;
-  seller: {
-    nickname: string;
+  price: number;
+  condition: string;
+  reviews?: {
+    rating_average?: number;
   };
 }
-const screenwidth = Dimensions.get('window').width;
-type PriceOrder= ''| 'Asc' | 'Desc';
-type ConditionPreference = '' | 'new' | 'used';
+
+const screenWidth = Dimensions.get('window').width;
+
 const searchProducts = () => {
   const { isDarkTheme } = useTheme();
   const [search, setSearch] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('');
-  const [priceOrderFilter, setPriceOrderFilter ] = useState('');
+  const [priceOrderFilter, setPriceOrderFilter] = useState('');
   const [loading, setLoading] = useState(false);
-  const [filteredProducts, setFilteredProducts] = useState([]);
-  const [categories, setCategories] = useState([]);
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<string[]>([]);
   const [showAdvancedSearch, setShowAdvancedSearch] = useState(false);
-  const [ConditionPreference, setConditionPreference] = useState('');
+  const [conditionPreference, setConditionPreference] = useState('');
+
   useEffect(() => {
     const fetchFilterProduct = async () => {
       try {
@@ -38,7 +40,7 @@ const searchProducts = () => {
       }
     };
     fetchFilterProduct();
-  }, [])
+  }, []);
 
   const resetAdvancedFilters = () => {
     setCategoryFilter('');
@@ -50,44 +52,41 @@ const searchProducts = () => {
     let filteredProducts = product;
     if (categoryFilter.trim() !== '') {
       const normalizedCategoryFilter = categoryFilter.trim().toLowerCase();
-        if (filteredProducts.filters && filteredProducts.filters.length > 0) {
-          const categoryFilterObj = filteredProducts.filters.find((filter: any) => filter.id === "category");
+      if (filteredProducts.filters && filteredProducts.filters.length > 0) {
+        const categoryFilterObj = filteredProducts.filters.find((filter: any) => filter.id === "category");
         if (categoryFilterObj && categoryFilterObj.values.length > 0) {
-          // Verificamos si algún valor de path_from_root coincide con el filtro de categoría
           const isCategoryMatch = categoryFilterObj.values.some((value: any) =>
             value.path_from_root.some((path: any) =>
               path.name.trim().toLowerCase() === normalizedCategoryFilter
             )
           );
-          // Si no coincide con la categoría, devolvemos una lista vacia
-         if (!isCategoryMatch) {
+          if (!isCategoryMatch) {
             return [];
           }
         }
       }
     }
-    if(ConditionPreference.trim()!== ''){
-      const conditionPreferenceUser= ConditionPreference.trim().toLowerCase();
-      // Función para ordenar según la preferencia del usuario
+    if (conditionPreference.trim() !== '') {
+      const conditionPreferenceUser = conditionPreference.trim().toLowerCase();
       filteredProducts.results.sort((a: any, b: any) => {
-        if (a.condition === null) return 1;  // a va después
-        if (b.condition === null) return -1; // b va después
+        if (a.condition === null) return 1;
+        if (b.condition === null) return -1;
         if (a.condition.trim().toLowerCase() === conditionPreferenceUser && b.condition.trim().toLowerCase() !== conditionPreferenceUser) {
-          return -1; // a antes que b si a coincide con la preferencia del usuario
+          return -1;
         } else if (a.condition.trim().toLowerCase() !== conditionPreferenceUser && b.condition.trim().toLowerCase() === conditionPreferenceUser) {
-          return 1; // b antes que a si b coincide con la preferencia del usuario
+          return 1;
         } else {
-          return 0; // mantener el orden actual si ambos tienen la misma condición
+          return 0;
         }
-        
       });
     }
     return filteredProducts.results;
   };
+
   const fetchAllProductsCategory = async (consultPrice: string) => {
     setLoading(true);
     try {
-      const data = await GetALLProductsCategory(categoryFilter+consultPrice);
+      const data = await GetALLProductsCategory(categoryFilter + consultPrice);
       const dataFilter = await HandleFilterCondition(data);
       setFilteredProducts(dataFilter);
       setLoading(false);
@@ -95,41 +94,42 @@ const searchProducts = () => {
       console.error("Error fetching all products for categories: ", error);
       setLoading(false);
     }
-  }
-  const HandleFilterCondition= (product : any) => {
+  };
+
+  const HandleFilterCondition = (product: any) => {
     let filteredProducts = product;
-    if(ConditionPreference.trim()!== ''){
-      const conditionPreferenceUser= ConditionPreference.trim().toLowerCase();
-      // Función para ordenar según la preferencia del usuario
+    if (conditionPreference.trim() !== '') {
+      const conditionPreferenceUser = conditionPreference.trim().toLowerCase();
       filteredProducts.results.sort((a: any, b: any) => {
-        if (a.condition === null) return 1;  // a va después
-        if (b.condition === null) return -1; // b va después
+        if (a.condition === null) return 1;
+        if (b.condition === null) return -1;
         if (a.condition.trim().toLowerCase() == conditionPreferenceUser && b.condition.trim().toLowerCase() != conditionPreferenceUser) {
-          return -1; // a antes que b si a coincide con la preferencia del usuario
+          return -1;
         } else if (a.condition.trim().toLowerCase() != conditionPreferenceUser && b.condition.trim().toLowerCase() == conditionPreferenceUser) {
-          return 1; // b antes que a si b coincide con la preferencia del usuario
+          return 1;
         } else {
-          return 0; // mantener el orden actual si ambos tienen la misma condición
+          return 0;
         }
-        
       });
     }
     return filteredProducts.results;
-  }
+  };
+
   const HandleConsultPrice = () => {
     let consultPrice = '';
     if (priceOrderFilter) {
       switch (priceOrderFilter) {
-        case 'Asc':consultPrice = '&sort=price_asc';
+        case 'Asc': consultPrice = '&sort=price_asc';
           break;
-        case 'Desc':consultPrice = '&sort=price_desc';
+        case 'Desc': consultPrice = '&sort=price_desc';
           break;
-        default:consultPrice = '';
+        default: consultPrice = '';
           break;
       }
     }
     return consultPrice;
   };
+
   const handleSearch = async () => {
     const consultPrice = HandleConsultPrice();
     if (search.trim() === '') {
@@ -141,7 +141,7 @@ const searchProducts = () => {
     } else {
       setLoading(true);
       try {
-        const data = await SearchProduct(search+consultPrice);
+        const data = await SearchProduct(search + consultPrice);
         const fetchedProducts = data;
         const filtered = applyFilters(fetchedProducts);
         if (filtered.length === 0) {
@@ -155,21 +155,30 @@ const searchProducts = () => {
       }
     }
   };
-  const handleKeyDown = (event: {nativeEvent: { key: string; };}) => {
+
+  const handleKeyDown = (event: { nativeEvent: { key: string; }; }) => {
     if (event.nativeEvent.key === 'Enter') {
       handleSearch();
     }
   };
+
   const handleToggleAdvancedSearch = () => {
     setShowAdvancedSearch(!showAdvancedSearch);
     if (showAdvancedSearch) {
       resetAdvancedFilters();
     }
   };
+
   const priceOrderOptions: PriceOrder[] = ['', 'Asc', 'Desc'];
-  const PreferenceCondition: ConditionPreference[] = ['','new', 'used']
+  const preferenceCondition: ConditionPreference[] = ['', 'new', 'used'];
+
+  if (loading) {
+    return <Loading />;
+  }
+
   return (
-    <View style={isDarkTheme ? styles.containerDark : styles.container}>
+    <ScrollView contentContainerStyle={[styles.container, isDarkTheme ? styles.darkContainer : styles.lightContainer]}>
+      <Text style={[styles.mainTitle, isDarkTheme ? styles.mainTitleDark : styles.mainTitleLight]}>Buscar Productos</Text>
       <View style={isDarkTheme ? styles.searchFormDark : styles.searchForm}>
         <TextInput
           style={isDarkTheme ? styles.inputDark : styles.input}
@@ -192,72 +201,78 @@ const searchProducts = () => {
               selectedValue={categoryFilter}
               style={isDarkTheme ? styles.selectDark : styles.select}
               onValueChange={(itemValue) => setCategoryFilter(itemValue)}
-             >
+            >
               <Picker.Item label="Select category" value="" />
               {categories.map((category, index) => (
                 <Picker.Item key={index} label={category} value={category} />
               ))}
             </Picker>
-              <Text style={isDarkTheme ? styles.modalTitleDark : styles.modalTitle}>Filter Price</Text>
-              <Picker
-                selectedValue={priceOrderFilter}
-                style={isDarkTheme ? styles.selectDark : styles.select}
-                onValueChange={(itemValue) => setPriceOrderFilter(itemValue)}
-              >
-                {priceOrderOptions.map((option, index) => (
-                  <Picker.Item key={index} label={option === '' ? 'No Filter' : option} value={option} />
-                ))}
+            <Text style={isDarkTheme ? styles.modalTitleDark : styles.modalTitle}>Filter Price</Text>
+            <Picker
+              selectedValue={priceOrderFilter}
+              style={isDarkTheme ? styles.selectDark : styles.select}
+              onValueChange={(itemValue) => setPriceOrderFilter(itemValue)}
+            >
+              {priceOrderOptions.map((option, index) => (
+                <Picker.Item key={index} label={option === '' ? 'No Filter' : option} value={option} />
+              ))}
             </Picker>
 
             <Text style={isDarkTheme ? styles.modalTitleDark : styles.modalTitle}>Filter Condition</Text>
-              <Picker
-                selectedValue={ConditionPreference}
-                style={isDarkTheme ? styles.selectDark : styles.select}
-                onValueChange={(itemValue) => setConditionPreference(itemValue)}
-              >
-                {PreferenceCondition.map((option, index) => (
-                  <Picker.Item key={index} label={option === '' ? 'No Filter' : option} value={option} />
-                ))}
+            <Picker
+              selectedValue={conditionPreference}
+              style={isDarkTheme ? styles.selectDark : styles.select}
+              onValueChange={(itemValue) => setConditionPreference(itemValue)}
+            >
+              {preferenceCondition.map((option, index) => (
+                <Picker.Item key={index} label={option === '' ? 'No Filter' : option} value={option} />
+              ))}
             </Picker>
           </View>
         )}
       </View>
 
-      <FlatList<filteredProducts>
-        data={filteredProducts}
-        renderItem={({ item }) => (
-          <CardProduct
-            id={item.id}
-            image={item.thumbnail}
-            title={item.title}
-            price={item.price}
-            condition={item.condition}
-          />
-        )}
-        contentContainerStyle={styles.list}
-        numColumns={screenwidth > 600 ? 3 : 1}
-        keyExtractor={(item) => item.id}
-      />
-    </View>
+      <View style={styles.section}>
+        <Text style={[styles.sectionTitle, isDarkTheme ? styles.titleDark : styles.titleLight]}>Resultados de la Búsqueda</Text>
+        <View style={styles.productList}>
+          {filteredProducts.map((product) => (
+            <CardProduct
+              key={product.id}
+              id={product.id}
+              image={product.thumbnail}
+              title={product.title}
+              price={product.price}
+              condition={product.condition}
+            />
+          ))}
+        </View>
+      </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#f5f5f5',
+    flexGrow: 1,
     padding: 16,
-    width: '100%', 
+    alignItems: 'center',
   },
-  containerDark: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#333',
-    padding: 16,
-    width: '100%', 
+  darkContainer: {
+    backgroundColor: '#000',
+  },
+  lightContainer: {
+    backgroundColor: '#fff',
+  },
+  mainTitle: {
+    fontSize: 32,
+    fontWeight: 'bold',
+    marginBottom: 8,
+  },
+  mainTitleLight: {
+    color: '#3483FA', // Azul para modo claro
+  },
+  mainTitleDark: {
+    color: '#FFDD00', // Amarillo para modo oscuro
   },
   searchForm: {
     flexDirection: 'row',
@@ -363,7 +378,6 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     marginTop: 10,
     width: '100%',
-   
   },
   select: {
     flex: 1,
@@ -372,7 +386,6 @@ const styles = StyleSheet.create({
     borderColor: '#ddd',
     borderRadius: 8,
     backgroundColor: '#fff',
-   
   },
   selectDark: {
     flex: 1,
@@ -382,12 +395,96 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     backgroundColor: '#666',
     color: '#fff',
-   
   },
-  list: {
-    justifyContent: 'center',
-    alignItems: 'center',
+  section: {
+    marginBottom: 32,
     width: '100%',
+    alignItems: 'center',
+  },
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 16,
+  },
+  productList: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+  },
+  cardContainer: {
+    flexDirection: 'column',
+    alignItems: 'center',
+    width: screenWidth > 600 ? '48%' : '100%',
+    marginVertical: 10,
+    shadowColor: 'rgba(0, 0, 0, 0.2)',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.8,
+    borderRadius: 10,
+    overflow: 'hidden',
+    backgroundColor: '#fff',
+    cursor: 'pointer',
+  },
+  cardContainerDark: {
+    flexDirection: 'column',
+    alignItems: 'center',
+    width: screenWidth > 600 ? '48%' : '100%',
+    marginVertical: 10,
+    shadowColor: 'rgba(0, 0, 0, 0.2)',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.8,
+    borderRadius: 10,
+    overflow: 'hidden',
+    backgroundColor: '#333',
+    cursor: 'pointer',
+  },
+  imageContainer: {
+    width: '100%',
+    height: 150,
+    borderBottomWidth: 2,
+    borderBottomColor: '#3483FA', // Azul para modo claro
+  },
+  imageContainerDark: {
+    width: '100%',
+    height: 150,
+    borderBottomWidth: 2,
+    borderBottomColor: '#FFDD00', // Amarillo para modo oscuro
+  },
+  image: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover',
+  },
+  content: {
+    padding: 10,
+    textAlign: 'center',
+  },
+  titleLight: {
+    fontSize: 18,
+    color: '#333',
+    marginBottom: 10,
+  },
+  titleDark: {
+    fontSize: 18,
+    color: '#fff',
+    marginBottom: 10,
+  },
+  price: {
+    fontSize: 16,
+    color: '#000',
+    marginVertical: 5,
+  },
+  priceDark: {
+    fontSize: 16,
+    color: '#fff',
+    marginVertical: 5,
+  },
+  condition: {
+    fontSize: 14,
+    color: '#555',
+  },
+  conditionDark: {
+    fontSize: 14,
+    color: '#ccc',
   },
 });
 
