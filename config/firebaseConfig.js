@@ -3,7 +3,6 @@ import { getAuth, GoogleAuthProvider, signInWithPopup, signOut,initializeAuth, g
 import { getFirestore } from 'firebase/firestore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Platform } from 'react-native';
-
 const firebaseConfig = {
     apiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY,
     authDomain: "promocionestec-a3718.firebaseapp.com",
@@ -26,21 +25,26 @@ if (Platform.OS === 'web') {
 }
 const provider = new GoogleAuthProvider();
 
+// Función para manejar Google Sign-In
 const signInWithGoogle = async () => {
-  try {
-    const result = await signInWithPopup(auth, provider);
-    console.log(result.user);
-  } catch (error) {
-    console.error(error);
+  if (Platform.OS === 'web') {
+    try {
+      const result = await signInWithPopup(auth, provider);
+      console.log(result.user);
+    } catch (error) {
+      console.error(error);
+    }
   }
 };
-
 const logOut = () => {
   return signOut(auth);
 };
+
+const getAuthent = () => {
+  return auth;
+}
 const getCurrentUser = () => {
   return auth.currentUser;
 }
 const db = getFirestore(app);
-export { db };
-export { auth, signInWithGoogle, logOut, getCurrentUser};
+export { db, getAuthent,auth, signInWithGoogle,logOut, getCurrentUser};

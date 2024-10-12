@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Modal, Image } from 'react-native';
 import { signInWithGoogle, getCurrentUser, logOut, db } from '../config/firebaseConfig';
+import GoogleLogin from '../config/firebaseMovil';
 import { useRouter } from 'expo-router';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
-import { useTheme } from '../config/ThemeContext';
+import { useTheme } from './ThemeContext';
 import Icon from 'react-native-vector-icons/FontAwesome';
-
+import { Platform } from 'react-native';
 interface LoginModalProps {
   visible: boolean;
   onClose: () => void;
@@ -26,27 +27,38 @@ const LoginModal: React.FC<LoginModalProps> = ({ visible, onClose }) => {
     }
   }, []);
 
-  const handleSignInWithGoogle = async () => {
-    try {
-      await signInWithGoogle();
-      const currentUser = getCurrentUser();
-      if (currentUser) {
-        setIsLoggedIn(true);
-        setUserProfilePicture(currentUser.photoURL);
-
-        const carritoRef = doc(db, 'Carrito', currentUser.uid);
-        const carritoDoc = await getDoc(carritoRef);
-
-        if (!carritoDoc.exists()) {
-          await setDoc(carritoRef, {}, { merge: true });
-          console.log('Documento de carrito creado');
-        } else {
-          console.log('Documento de carrito ya existe');
-        }
+  const updateUserProfile = async () => {
+    const currentUser = getCurrentUser();
+    if (currentUser) {
+      setIsLoggedIn(true);
+      setUserProfilePicture(currentUser.photoURL);
+  
+      const carritoRef = doc(db, 'Carrito', currentUser.uid);
+      const carritoDoc = await getDoc(carritoRef);
+  
+      if (!carritoDoc.exists()) {
+        await setDoc(carritoRef, {}, { merge: true });
+        console.log('Documento de carrito creado');
+      } else {
+        console.log('Documento de carrito ya existe');
       }
+    }
+  };
+  const handleSignInWithGoogle = async () => {
+    if (Platform.OS== "web"){
+      try { 
+        await signInWithGoogle();
+        await updateUserProfile();
+      } catch (error) {
+        console.error("Error signing in with Google: ", error);
+      }
+  }else{
+    try {
+      await GoogleLogin(updateUserProfile);
     } catch (error) {
       console.error("Error signing in with Google: ", error);
     }
+  }
   };
 
   const handleLogOut = async () => {
@@ -61,8 +73,8 @@ const LoginModal: React.FC<LoginModalProps> = ({ visible, onClose }) => {
   };
 
   const navigateToWishlist = () => {
-    onClose(); 
-    router.push('/wishList'); 
+    onClose(); // Cerrar el modal antes de navegar
+    router.push('/wishList'); // Navegar al componente Wishlist
   };
 
   return (
@@ -89,14 +101,14 @@ const LoginModal: React.FC<LoginModalProps> = ({ visible, onClose }) => {
               </Text>
             </TouchableOpacity>
           )}
-          <TouchableOpacity
-            style={isDarkTheme ? styles.buttonDark : styles.button}
-            onPress={isLoggedIn ? handleLogOut : handleSignInWithGoogle}
-          >
-            <Text style={isDarkTheme ? styles.buttonTextDark : styles.buttonText}>
-              {isLoggedIn ? 'Log Out' : 'Sign In with Google'}
-            </Text>
-          </TouchableOpacity>
+            <TouchableOpacity
+              style={isDarkTheme ? styles.buttonDark : styles.button}
+              onPress={isLoggedIn ? handleLogOut : handleSignInWithGoogle}
+            >
+              <Text style={isDarkTheme ? styles.buttonTextDark : styles.buttonText}>
+                {isLoggedIn ? 'Log Out' : 'Sign In with Google'}
+              </Text>
+            </TouchableOpacity>
         </View>
       </View>
     </Modal>

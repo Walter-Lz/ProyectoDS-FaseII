@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "68885677496",
+    "project_id": "promocionestec-a3718",
+    "storage_bucket": "promocionestec-a3718.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:68885677496:android:a9e6bbabbb54197176fb4d",
+        "android_client_info": {
+          "package_name": "package.promociones"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "68885677496-fq933jqtdkecj7m9p606qhlab1a6e13j.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBvt54Jm1Wtodpc_n62hT6phoiysM5OzwA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "68885677496-fq933jqtdkecj7m9p606qhlab1a6e13j.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
