@@ -4,7 +4,7 @@ import { signInWithGoogle, getCurrentUser, logOut, db } from '../config/firebase
 import GoogleLogin from '../config/firebaseMovil';
 import { useRouter } from 'expo-router';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
-import { useTheme } from './ThemeContext';
+import { useTheme } from '../config/ThemeContext';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Platform } from 'react-native';
 interface LoginModalProps {
