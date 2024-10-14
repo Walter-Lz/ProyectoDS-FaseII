@@ -18,6 +18,7 @@ interface Product {
 }
 
 const screenWidth = Dimensions.get('window').width;
+const screenheight= Dimensions.get('window').height;
 
 const searchProducts = () => {
   const { isDarkTheme } = useTheme();
@@ -195,6 +196,7 @@ const searchProducts = () => {
         </TouchableOpacity>
 
         {showAdvancedSearch && (
+        <ScrollView style={styles.advancedSearchContainer}>
           <View style={styles.filterGroup}>
             <Text style={isDarkTheme ? styles.modalTitleDark : styles.modalTitle}>Filter Category</Text>
             <Picker
@@ -229,6 +231,7 @@ const searchProducts = () => {
               ))}
             </Picker>
           </View>
+          </ScrollView>
         )}
       </View>
 
@@ -331,12 +334,15 @@ const styles = StyleSheet.create({
     minWidth: 200,
     color: '#fff',
   },
+  advancedSearchContainer: {
+    maxHeight:'100%',// Ajusta este valor según sea necesario
+  },
   button: {
     paddingVertical: 12,
-    paddingHorizontal: 20,
+    paddingHorizontal:24,
+    marginRight: 10,
     backgroundColor: '#fff',
     borderRadius: 8,
-    marginLeft: 10,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -375,9 +381,9 @@ const styles = StyleSheet.create({
   },
   filterGroup: {
     flexDirection: 'column',
-    alignItems: 'flex-start',
-    marginTop: 10,
-    width: '100%',
+    alignItems: 'stretch',
+    marginTop: 12,
+    width: screenWidth > 600 ? '48%' : '100%',
   },
   select: {
     flex: 1,

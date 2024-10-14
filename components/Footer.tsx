@@ -42,10 +42,10 @@ const Footer: React.FC = () => {
                 {dev.name}
               </Text>
               <TouchableOpacity onPress={() => Linking.openURL(dev.github)}>
-                <FontAwesome name="github" size={24} color={isDarkTheme ? '#000' : '#fff'} style={styles.icon} />
+                <FontAwesome name="github" size={24} color={isDarkTheme ? '#fff' : '#fff'} style={styles.icon} />
               </TouchableOpacity>
               <TouchableOpacity onPress={() => Linking.openURL(dev.linkedin)}>
-                <FontAwesome name="linkedin" size={24} color={isDarkTheme ? '#000' : '#fff'} style={styles.icon} />
+                <FontAwesome name="linkedin" size={24} color={isDarkTheme ? '#fff' : '#fff'} style={styles.icon} />
               </TouchableOpacity>
             </View>
           ))}
@@ -62,7 +62,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   darkFooter: {
-    backgroundColor: '#FFDD00',
+    backgroundColor: '#000',
   },
   lightFooter: {
     backgroundColor: '#3483FA',
@@ -71,7 +71,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   darkText: {
-    color: '#000',
+    color: '#FFDD00',
   },
   lightText: {
     color: '#fff',
